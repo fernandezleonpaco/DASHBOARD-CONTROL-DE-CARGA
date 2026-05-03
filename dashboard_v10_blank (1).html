@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bryant Men&#39;s Soccer &mdash; Performance Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#f4f6fa;--white:#fff;--surf:#eef1f6;
+  --brd:#e1e6ef;--brd2:#c8d0dd;
+  --txt:#1a2235;--muted:#6b7a92;--hint:#9aa5b4;
+  --blue:#2563eb;--bluel:#dbeafe;--blued:#1d4ed8;
+  --green:#059669;--greenl:#d1fae5;
+  --amber:#d97706;--amberl:#fef3c7;
+  --red:#dc2626;--redl:#fee2e2;
+  --purple:#7c3aed;--purplel:#ede9fe;
+  --teal:#0891b2;
+  --f:'Outfit',sans-serif;--m:'JetBrains Mono',monospace;
+  --r:10px;--rs:7px;--rl:14px;
+  --sh:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 16px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:var(--f);font-size:14px;line-height:1.5}
+.shell{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:216px;background:var(--white);border-right:1px solid var(--brd);display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto;z-index:100;box-shadow:var(--sh)}
+.main{margin-left:216px;flex:1;padding:20px;min-width:0}
+.logo{padding:14px 12px 10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:9px}
+.logo-icon{width:32px;height:32px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.lt1{font-size:12px;font-weight:700}.lt2{font-size:10px;color:var(--muted);margin-top:1px}
+.nav{padding:7px 5px;flex:1}
+.ns{font-size:9px;color:var(--hint);text-transform:uppercase;letter-spacing:.12em;font-weight:600;padding:7px 8px 3px}
+.ni{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:var(--rs);cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;transition:all .15s;margin-bottom:1px}
+.ni:hover{background:var(--surf);color:var(--txt)}
+.ni.active{background:var(--bluel);color:var(--blue);font-weight:600}
+.ni svg{width:14px;height:14px;flex-shrink:0;stroke-width:2}
+.ndv{height:1px;background:var(--brd);margin:4px 0}
+.sb-wrap{padding:9px;border-top:1px solid var(--brd)}
+.sb-lbl{font-size:9px;color:var(--hint);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:3px;display:block}
+select.sbf{width:100%;background:var(--white);border:1px solid var(--brd2);color:var(--txt);padding:5px 7px;border-radius:var(--rs);font-size:11px;font-family:var(--f);cursor:pointer;outline:none;margin-bottom:7px}
+
+/* LAYOUT */
+.section{display:none}.section.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.card{background:var(--white);border:1px solid var(--brd);border-radius:var(--r);padding:15px;margin-bottom:13px;box-shadow:var(--sh)}
+.chd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:6px}
+.ctitle{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.cbadge{font-size:9px;color:var(--muted);background:var(--surf);padding:2px 6px;border-radius:4px}
+.chw{position:relative;width:100%}
+.leg{display:flex;gap:11px;flex-wrap:wrap;margin-bottom:7px}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.ll{width:14px;height:2px;border-radius:2px;flex-shrink:0}
+
+/* KPI MINI */
+.km{background:var(--white);border:1px solid var(--brd);border-radius:var(--rs);padding:11px 12px;box-shadow:var(--sh)}
+.km-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:3px}
+.km-v{font-size:20px;font-weight:700;font-family:var(--m);line-height:1;color:var(--txt)}
+.km-s{font-size:9px;color:var(--hint);margin-top:3px}
+.km-r{font-size:9px;margin-top:4px;font-weight:600}
+.r-ok{color:var(--green)}.r-warn{color:var(--amber)}.r-bad{color:var(--red)}
+
+/* TABLE */
+.tbl-w{overflow-x:auto;border-radius:var(--rs);border:1px solid var(--brd)}
+table.tbl{width:100%;border-collapse:collapse;font-size:11px}
+table.tbl th{text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;border-bottom:2px solid var(--brd);white-space:nowrap;font-size:10px;text-transform:uppercase;cursor:pointer;background:var(--surf)}
+table.tbl th:hover{color:var(--blue)}
+table.tbl td{padding:7px 8px;border-bottom:1px solid var(--brd);white-space:nowrap}
+table.tbl td.mn{font-family:var(--m);font-size:11px}
+table.tbl tr:hover td{background:#fafbfd}
+table.tbl tr:last-child td{border-bottom:none}
+
+/* BADGES */
+.pos{display:inline-block;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px}
+.pMID{background:#dbeafe;color:#1d4ed8}.pFWD{background:#fee2e2;color:#b91c1c}
+.pDEF{background:#d1fae5;color:#065f46}.pWIN{background:#fef3c7;color:#92400e}
+.up{color:var(--green);font-size:10px;font-weight:700}
+.dn{color:var(--red);font-size:10px;font-weight:700}
+.stag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px}
+.stag-m{background:#dbeafe;color:#1d4ed8}.stag-t{background:#f1f5f9;color:#475569}
+
+/* ALERT BARS */
+.abar{border-radius:var(--r);padding:8px 13px;font-size:11px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.abar-r{background:var(--redl);color:var(--red);border:1px solid #fca5a5}
+.abar-a{background:var(--amberl);color:var(--amber);border:1px solid #fde68a}
+.abar-g{background:var(--greenl);color:var(--green);border:1px solid #6ee7b7}
+
+/* STATUS PILLS */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:opacity .15s}
+.pill:hover{opacity:.75}
+.pill-g{background:#f0fdf4;border-color:#bbf7d0;color:var(--green)}
+.pill-a{background:#fffbeb;border-color:#fde68a;color:var(--amber)}
+.pill-r{background:#fef2f2;border-color:#fca5a5;color:var(--red)}
+.pill-d{background:#fef2f2;border-color:#ef4444;color:#991b1b}
+
+/* WELLNESS */
+.rdns{width:56px;height:56px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:17px;font-family:var(--m);flex-shrink:0;border:2px solid}
+.rg{background:var(--greenl);color:var(--green);border-color:var(--green)}
+.ra{background:var(--amberl);color:var(--amber);border-color:var(--amber)}
+.rr{background:var(--redl);color:var(--red);border-color:var(--red)}
+.wc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.wc{background:var(--surf);border-radius:var(--rs);padding:7px;text-align:center;border:1px solid var(--brd)}
+.wv{font-size:17px;font-weight:700;font-family:var(--m);line-height:1}
+.wl{font-size:8px;color:var(--muted);text-transform:uppercase;margin-top:3px}
+.cg{color:var(--green)}.ca{color:var(--amber)}.cr{color:var(--red)}
+
+/* INURY */
+.inj-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dot-r{background:var(--red)}.dot-a{background:var(--amber)}.dot-g{background:var(--green)}
+
+/* BLOCK LABELS */
+.blk-lbl{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:4px 0 7px;display:flex;align-items:center;gap:6px}
+.blk-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* FILTER BAR */
+.fbar{background:var(--white);border:1px solid var(--brd);border-radius:var(--rl);padding:13px 16px;margin-bottom:15px;box-shadow:var(--sh)}
+.fbar-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.flbl{font-size:9px;color:var(--hint);text-transform:uppercase;letter-spacing:.08em;font-weight:600;white-space:nowrap}
+.fsel{background:var(--white);border:1px solid var(--brd2);color:var(--txt);padding:5px 9px;border-radius:var(--rs);font-size:11px;font-family:var(--f);cursor:pointer;outline:none}
+.fsel:focus{border-color:var(--blue)}
+.mode-wrap{display:flex;background:var(--surf);border-radius:var(--rs);padding:3px;gap:2px}
+.mbtn{padding:4px 13px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:var(--f);transition:all .15s}
+.mbtn.on{background:var(--blue);color:#fff}
+.mbtn.off{background:transparent;color:var(--muted)}
+.mbtn.off:hover{color:var(--txt);background:rgba(0,0,0,.04)}
+.find{margin-top:7px;font-size:10px;color:var(--muted);padding-top:7px;border-top:1px solid var(--brd)}
+
+/* MODALS */
+.ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
+.ovl.open{display:flex}
+.modal{background:var(--white);border-radius:var(--rl);padding:20px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--sh2)}
+.modal h2{font-size:14px;font-weight:700;margin-bottom:12px}
+.mfr{margin-bottom:9px}
+.mfr label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;display:block;margin-bottom:3px}
+.mfr input,.mfr select,.mfr textarea{width:100%;background:var(--white);border:1px solid var(--brd2);color:var(--txt);padding:6px 9px;border-radius:var(--rs);font-size:12px;font-family:var(--f);outline:none}
+.mfr input:focus,.mfr select:focus{border-color:var(--blue)}
+.mfr textarea{resize:vertical;min-height:55px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mfoot{display:flex;gap:6px;justify-content:flex-end;margin-top:12px}
+.btn{padding:5px 11px;border-radius:var(--rs);font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--brd2);background:var(--white);color:var(--muted);font-family:var(--f);transition:all .15s}
+.btn:hover{background:var(--surf);color:var(--txt)}
+.btnp{background:var(--blue);border-color:var(--blue);color:#fff}
+.btnp:hover{background:var(--blued)}
+.btng{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ACWR ZONE BAR */
+.zbar{display:flex;height:5px;border-radius:3px;overflow:hidden;margin:4px 0}
+
+/* PDF STATUS */
+.pdf-row{display:flex;align-items:center;gap:10px;padding:7px 11px;background:var(--surf);border-radius:var(--rs);font-size:11px;margin-bottom:9px}
+.pdf-row .icon{font-size:15px;flex-shrink:0}
+
+/* PARTICIPATION DOTS */
+.pdot{display:inline-block;border-radius:3px;width:16px;height:16px}
+.pd-t{background:#bfdbfe}.pd-m{background:#2563eb}.pd-i{background:#fca5a5}.pd-a{background:#e5e7eb}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ===== MODALS ===== -->
+<div class="ovl" id="mPDF">
+  <div class="modal" style="width:560px">
+    <h2>Resultados PDF PlayerData</h2>
+    <div id="pdfResult"></div>
+    <div class="mfoot"><button class="btn btnp" onclick="closeM('mPDF')">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- MODAL GOOGLE FORMS -->
+<div class="ovl" id="mForms">
+  <div class="modal" style="width:560px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h2 style="margin:0">Conectar Google Forms</h2>
+      <div id="syncBadge" style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:12px;background:var(--surf);color:var(--hint)">Sin datos</div>
+    </div>
+
+    <!-- WELLNESS -->
+    <div style="margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+        <span style="width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0"></span>
+        <span style="font-size:12px;font-weight:700">Form Wellness &mdash; Manana</span>
+        <span id="wellStatus" style="font-size:10px;color:var(--hint);margin-left:auto">Sin conectar</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.6">
+        Pega la URL CSV de la Sheet (Archivo &rarr; Publicar en la web &rarr; CSV):
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:5px">
+        <input type="text" id="wellUrlInput"
+          placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv"
+          style="flex:1;background:var(--white);border:1px solid var(--brd2);color:var(--txt);padding:7px 10px;border-radius:var(--rs);font-size:11px;font-family:var(--f);outline:none">
+        <button class="btn btng" style="white-space:nowrap;font-size:11px" onclick="connectUrl('well')">Conectar</button>
+      </div>
+      <div id="wellResult" style="font-size:10px;min-height:16px"></div>
+    </div>
+
+    <!-- DIVISOR -->
+    <div style="height:1px;background:var(--brd);margin-bottom:13px"></div>
+
+    <!-- RPE -->
+    <div style="margin-bottom:13px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+        <span style="width:9px;height:9px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>
+        <span style="font-size:12px;font-weight:700">Form RPE &mdash; Post-sesion</span>
+        <span id="rpeStatus" style="font-size:10px;color:var(--hint);margin-left:auto">Sin conectar</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.6">
+        Pega la URL CSV de la Sheet del RPE:
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:5px">
+        <input type="text" id="rpeUrlInput"
+          placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv"
+          style="flex:1;background:var(--white);border:1px solid var(--brd2);color:var(--txt);padding:7px 10px;border-radius:var(--rs);font-size:11px;font-family:var(--f);outline:none">
+        <button class="btn btnp" style="white-space:nowrap;font-size:11px" onclick="connectUrl('rpe')">Conectar</button>
+      </div>
+      <div id="rpeResult" style="font-size:10px;min-height:16px"></div>
+    </div>
+
+    <!-- AUTO SYNC -->
+    <div style="background:var(--surf);border-radius:var(--r);padding:11px 13px;margin-bottom:12px;border:1px solid var(--brd)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:12px;font-weight:700">Auto-sincronizacion</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Lee las Sheets automaticamente cada X minutos</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <select id="syncInterval" class="fsel" style="font-size:11px">
+            <option value="60">1 min</option>
+            <option value="120" selected>2 min</option>
+            <option value="300">5 min</option>
+            <option value="600">10 min</option>
+          </select>
+          <div id="toggleBg" onclick="toggleAutoSync()" style="width:40px;height:22px;border-radius:11px;background:var(--brd2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0">
+            <div id="toggleDot" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)"></div>
+          </div>
+          <span id="toggleLbl" style="font-size:11px;font-weight:600;color:var(--muted);min-width:70px">Desactivado</span>
+        </div>
+      </div>
+      <div id="syncCountdown" style="font-size:10px;color:var(--hint);margin-top:5px"></div>
+    </div>
+
+    <!-- RESUMEN -->
+    <div id="loadedSummary" style="display:none;background:var(--greenl);border:1px solid #6ee7b7;border-radius:var(--r);padding:9px 13px;margin-bottom:12px;font-size:11px;color:var(--green)"></div>
+
+    <!-- FOOTER -->
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:7px">
+        <label class="btn" style="cursor:pointer;font-size:10px">
+          &#8593; CSV Wellness
+          <input type="file" accept=".csv" style="display:none" onchange="loadWellnessCSV(this,'well')">
+        </label>
+        <label class="btn" style="cursor:pointer;font-size:10px">
+          &#8593; CSV RPE
+          <input type="file" accept=".csv" style="display:none" onchange="loadWellnessCSV(this,'rpe')">
+        </label>
+        <button class="btn" style="font-size:10px" onclick="syncNow()">&#8635; Sincronizar</button>
+      </div>
+      <button class="btn" onclick="closeM('mForms')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AÑADIR JUGADOR -->
+<div class="ovl" id="mAddPlayer">
+  <div class="modal" style="width:420px">
+    <h2>Añadir jugador</h2>
+    <div class="fg2">
+      <div class="mfr"><label>Nombre completo</label><input type="text" id="apName" placeholder="Ej: Carlos Garcia"></div>
+      <div class="mfr"><label>Iniciales (2-3 letras)</label><input type="text" id="apInit" placeholder="Ej: CG" maxlength="3"></div>
+      <div class="mfr"><label>Posicion</label><select id="apPos"><option value="MID">Centrocampista (MID)</option><option value="FWD">Delantero (FWD)</option><option value="DEF">Defensa (DEF)</option><option value="WIN">Extremo (WIN)</option><option value="GK">Portero (GK)</option></select></div>
+      <div class="mfr"><label>Dorsal</label><input type="number" id="apNum" placeholder="10" min="1" max="99"></div>
+    </div>
+    <div id="apError" style="font-size:11px;color:var(--red);margin-top:4px;display:none"></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('mAddPlayer')">Cancelar</button>
+      <button class="btn btnp" onclick="addPlayer()">Añadir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PLANTILLA -->
+<div class="ovl" id="mRoster">
+  <div class="modal" style="width:500px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h2 style="margin:0">Plantilla (<span id="rosterCount">0</span> jugadores)</h2>
+      <button class="btn btnp" style="font-size:11px" onclick="closeM('mRoster');openM('mAddPlayer')">+ Añadir</button>
+    </div>
+    <div id="rosterList" style="max-height:380px;overflow-y:auto"></div>
+    <div class="mfoot">
+      <button class="btn" style="color:var(--red);border-color:var(--red);font-size:10px" onclick="if(confirm('Borrar toda la plantilla?')){players=[];savePlayers();closeM('mRoster');location.reload();}">Borrar todo</button>
+      <button class="btn" onclick="closeM('mRoster')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MANUAL -->
+<div class="ovl" id="mManual">
+  <div class="modal" style="width:600px">
+    <h2>Entrada manual &mdash; datos GPS</h2>
+    <div style="display:flex;gap:7px;margin-bottom:10px">
+      <div class="mfr" style="flex:1;margin:0"><label>Jugador</label><select id="manP" onchange="fillMan(this.value)"></select></div>
+      <div class="mfr" style="flex:1;margin:0"><label>Tipo</label><select id="manT"><option value="match">Partido</option><option value="train">Entrenamiento</option></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px">
+      <div class="mfr" style="margin:0"><label>Distancia (km)</label><input type="number" id="m_dist" step="0.01"></div>
+      <div class="mfr" style="margin:0"><label>Session Load</label><input type="number" id="m_load"></div>
+      <div class="mfr" style="margin:0"><label>HIR (m)</label><input type="number" id="m_hir"></div>
+      <div class="mfr" style="margin:0"><label>Sprint (m)</label><input type="number" id="m_spd"></div>
+      <div class="mfr" style="margin:0"><label>Top speed (km/h)</label><input type="number" id="m_topSpd" step="0.1"></div>
+      <div class="mfr" style="margin:0"><label>m/min</label><input type="number" id="m_ypm"></div>
+      <div class="mfr" style="margin:0"><label>Aceleraciones</label><input type="number" id="m_acc"></div>
+      <div class="mfr" style="margin:0"><label>Deceleraciones</label><input type="number" id="m_dec"></div>
+      <div class="mfr" style="margin:0"><label>Hi Int. Eventos</label><input type="number" id="m_hiEvt"></div>
+      <div class="mfr" style="margin:0"><label>N sprints</label><input type="number" id="m_sprEvt"></div>
+      <div class="mfr" style="margin:0"><label>Workload</label><input type="number" id="m_wl" step="0.1"></div>
+      <div class="mfr" style="margin:0"><label>Minutos</label><input type="number" id="m_mins"></div>
+    </div>
+    <div style="background:var(--surf);padding:8px 11px;border-radius:var(--rs);font-size:10px;color:var(--muted);margin-bottom:10px">
+      Introduce todo en metrico (km, m, km/h). El dashboard recalcula ACWR y Fatigue automaticamente.
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('mManual')">Cancelar</button>
+      <button class="btn" onclick="clearMan()">Limpiar</button>
+      <button class="btn btnp" onclick="saveMan()">Guardar y recalcular</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SHELL ===== -->
+<div class="shell">
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">&#9917;</div>
+    <div><div class="lt1">Bryant Soccer</div><div class="lt2">Performance Hub</div></div>
+  </div>
+  <nav class="nav">
+    <div class="ns">Vistas</div>
+    <div class="ni active" id="nav-team" onclick="goTo('team',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Equipo
+    </div>
+    <div class="ni" id="nav-player" onclick="goTo('player',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Jugador
+    </div>
+    <div class="ni" id="nav-wellness" onclick="goTo('wellness',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Wellness
+    </div>
+    <div class="ni" id="nav-stats" onclick="goTo('stats',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Estadisticas
+    </div>
+    <div class="ni" id="nav-fatigue" onclick="goTo('fatigue',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Fatiga &amp; Riesgo
+    </div>
+    <div class="ndv"></div>
+    <div class="ns">Importar datos</div>
+    <div class="ni" onclick="triggerPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span id="pdfNavTxt">Subir PDF GPS</span>
+      <input type="file" accept=".pdf" id="pdfInput" style="display:none" onchange="handlePDF(this)">
+    </div>
+    <div class="ni" onclick="openM('mForms')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.63 19.79 19.79 0 01.1 4.05 2 2 0 012.08 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 9.91a16 16 0 006.11 6.11l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Google Forms
+      <span id="sidebarSyncDot" style="width:7px;height:7px;border-radius:50%;background:var(--brd2);margin-left:auto;flex-shrink:0;transition:background .3s"></span>
+    </div>
+    <div class="ni" onclick="openM('mManual')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Entrada manual
+    </div>
+    <div class="ni" onclick="openRoster()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Gestionar plantilla
+    </div>
+  </nav>
+  <div class="sb-wrap">
+    <label class="sb-lbl">Jugador activo</label>
+    <select class="sbf" id="sbPlayer" onchange="onSbPlayer(this.value)"></select>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- ===== EQUIPO ===== -->
+<div id="s-team" class="section active">
+
+<!-- FILTER BAR -->
+<div class="fbar">
+  <div class="fbar-row">
+    <div class="mode-wrap">
+      <button id="bTeam" class="mbtn on" onclick="setMode('team')">Equipo</button>
+      <button id="bPlayer" class="mbtn off" onclick="setMode('player')">Jugador</button>
+    </div>
+    <div id="pfWrap" style="display:none;align-items:center;gap:6px">
+      <span class="flbl">Jugador</span>
+      <select id="fPlayer" class="fsel" onchange="onFPlayer(this.value)" style="min-width:150px"></select>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="flbl">Sesion</span>
+      <select id="fSession" class="fsel" onchange="onFChange()">
+        <option value="s3">18 abr &mdash; vs Boston College</option>
+        <option value="s2">16 abr &mdash; Entreno</option>
+        <option value="s1">14 abr &mdash; Entreno</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="flbl">Ver</span>
+      <select id="fView" class="fsel" onchange="onFChange()">
+        <option value="cur">Sesion actual</option>
+        <option value="acc">Acumulado temporada</option>
+        <option value="avg">Media por sesion</option>
+      </select>
+    </div>
+    <div id="posWrap" style="display:flex;align-items:center;gap:6px">
+      <span class="flbl">Posicion</span>
+      <select id="fPos" class="fsel" onchange="filterPos(this.value)">
+        <option value="all">Todas</option><option value="MID">MID</option>
+        <option value="FWD">FWD</option><option value="DEF">DEF</option><option value="WIN">WIN</option>
+      </select>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <span class="flbl">Ranking</span>
+      <select id="fRank" class="fsel" onchange="renderStatusPills()">
+        <option value="fatigue">Fatigue</option><option value="acwr">ACWR</option>
+        <option value="dist">Dist</option><option value="load">Load</option>
+      </select>
+    </div>
+  </div>
+  <div class="find" id="filterInfo">Vista: <strong>Equipo completo</strong> &middot; Sesion: <strong>18 abr vs Boston College</strong> &middot; Mostrando: <strong>Sesion actual</strong></div>
+</div>
+
+<!-- PLAYER DETAIL PANEL -->
+<div id="playerPanel" style="display:none;margin-bottom:15px"></div>
+
+<!-- STATUS PILLS (only in team mode) -->
+<div id="statusArea" style="margin-bottom:14px"></div>
+
+<!-- BLOQUE 2 — CARGA -->
+<div id="teamContent">
+<div class="blk-lbl"><div class="blk-dot" style="background:var(--blue)"></div>BLOQUE 2 &mdash; CARGA</div>
+<div class="g4" id="kpiLoad" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card">
+    <div class="chd"><span class="ctitle">Distancia (km)</span><span class="cbadge">Ref 9&ndash;11 km partido</span></div>
+    <div class="leg"><span class="li"><span class="ld" style="background:#bfdbfe"></span>Entreno</span><span class="li"><span class="ld" style="background:#2563eb"></span>Partido</span><span class="li"><span class="ll" style="background:#059669"></span>Ref 9 km</span></div>
+    <div class="chw" style="height:190px"><canvas id="cDist"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">HIR + Sprint (m)</span><span class="cbadge">HIR ref 600&ndash;900 m</span></div>
+    <div class="leg"><span class="li"><span class="ld" style="background:#a7f3d0"></span>HIR</span><span class="li"><span class="ld" style="background:#34d399"></span>Sprint</span><span class="li"><span class="ll" style="background:#d97706"></span>Ref min</span></div>
+    <div class="chw" style="height:190px"><canvas id="cHIR"></canvas></div>
+  </div>
+</div>
+
+<!-- BLOQUE 3 — INTENSIDAD -->
+<div class="blk-lbl"><div class="blk-dot" style="background:#f97316"></div>BLOQUE 3 &mdash; INTENSIDAD</div>
+<div class="g2">
+  <div class="card">
+    <div class="chd"><span class="ctitle">Top speed (km/h)</span><span class="cbadge">Umbral sprint 25.2 km/h</span></div>
+    <div class="leg"><span class="li"><span class="ld" style="background:#cffafe"></span>Top speed</span><span class="li"><span class="ll" style="background:#f97316"></span>25.2 km/h</span></div>
+    <div class="chw" style="height:180px"><canvas id="cSpeed"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">Fatigue Index &mdash; 2a vs 1a mitad</span><span class="cbadge">Mohr 2003: &lt;85% = fatiga</span></div>
+    <div class="leg"><span class="li"><span class="ld" style="background:#bbf7d0"></span>Normal</span><span class="li"><span class="ld" style="background:#fca5a5"></span>Fatigado</span><span class="li"><span class="ll" style="background:#94a3b8"></span>85%</span></div>
+    <div class="chw" style="height:180px"><canvas id="cFatIdx"></canvas></div>
+  </div>
+</div>
+
+<!-- BLOQUE 4 — MECANICO -->
+<div class="blk-lbl"><div class="blk-dot" style="background:var(--purple)"></div>BLOQUE 4 &mdash; ESTRES MECANICO</div>
+<div class="card">
+  <div class="chd"><span class="ctitle">Accels + Decels (Bowen 2020 &mdash; predictor lesion)</span></div>
+  <div class="leg"><span class="li"><span class="ld" style="background:#ddd6fe"></span>Accels</span><span class="li"><span class="ld" style="background:#a78bfa"></span>Decels</span></div>
+  <div class="chw" style="height:170px"><canvas id="cAcc"></canvas></div>
+</div>
+
+<!-- BLOQUE 5 — ACWR -->
+<div class="blk-lbl"><div class="blk-dot" style="background:var(--red)"></div>BLOQUE 5 &mdash; ACWR &amp; CARGA ACUMULADA</div>
+<div style="background:var(--bluel);border:1px solid #bfdbfe;border-radius:var(--r);padding:11px 14px;margin-bottom:13px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+    <span style="font-size:11px;font-weight:700;color:var(--blue)">ACWR = Carga aguda 7d / Media cronica 28d &mdash; Gabbett 2016</span>
+    <span id="teamAcwrAvg" style="font-size:16px;font-weight:700;font-family:var(--m);color:var(--blue)"></span>
+  </div>
+  <div class="zbar"><div style="flex:1;background:#fca5a5;border-radius:3px 0 0 3px"></div><div style="flex:2;background:#bbf7d0"></div><div style="flex:1;background:#fde68a"></div><div style="flex:1;background:#fca5a5;border-radius:0 3px 3px 0"></div></div>
+  <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--hint);margin-top:2px"><span>&lt;0.8</span><span>0.8&ndash;1.3 Seguro</span><span>1.3&ndash;1.5 Alerta</span><span>&gt;1.5 Riesgo</span></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="chd"><span class="ctitle">ACWR por jugador</span><span class="cbadge">Zona segura 0.8&ndash;1.3</span></div>
+    <div class="leg"><span class="li"><span class="ld" style="background:#bbf7d0"></span>Seguro</span><span class="li"><span class="ld" style="background:#fde68a"></span>Alerta</span><span class="li"><span class="ld" style="background:#fca5a5"></span>Riesgo</span></div>
+    <div class="chw" style="height:185px"><canvas id="cACWR"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">Ranking por Fatigue Score</span></div>
+    <div id="rankList" style="max-height:200px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- TENDENCIA EQUIPO -->
+<div class="card">
+  <div class="chd">
+    <span class="ctitle">Tendencia equipo &mdash; todas las sesiones</span>
+    <div class="leg" style="margin:0"><span class="li"><span class="ld" style="background:#bfdbfe"></span>Entreno (E)</span><span class="li"><span class="ld" style="background:#2563eb"></span>Partido (P)</span></div>
+  </div>
+  <div class="chw" style="height:150px"><canvas id="cTrend"></canvas></div>
+</div>
+
+<!-- TABLA COMPLETA -->
+<div class="card">
+  <div class="chd"><span class="ctitle">Tabla completa</span><span style="font-size:10px;color:var(--hint)">Click cabecera ordena &middot; Click fila = jugador</span></div>
+  <div class="tbl-w">
+    <table class="tbl">
+      <thead><tr>
+        <th onclick="srt('name')">Jugador</th><th onclick="srt('pos')">Pos</th><th onclick="srt('mins')">Min</th>
+        <th onclick="srt('distKm')" title="Ref 9-11 km">Dist km</th>
+        <th onclick="srt('load')">Load</th>
+        <th onclick="srt('hirM')" title="Ref 600-900 m Malone 2019">HIR m</th>
+        <th onclick="srt('spdM')" title="Ref 150-300 m">Sprint m</th>
+        <th onclick="srt('topSpdKmh')" title="Umbral 25.2 km/h">Top km/h</th>
+        <th onclick="srt('acc')">Acc</th>
+        <th onclick="srt('dec')">Dec</th>
+        <th onclick="srt('acwr')" title="Gabbett 2016">ACWR</th>
+        <th onclick="srt('hirRatio')" title="Ref 8-12%">%HIR</th>
+        <th onclick="srt('adPerKm')">A+D/km</th>
+        <th onclick="srt('fatigue')">Fatigue</th>
+      </tr></thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PARTICIPACION -->
+<div class="card">
+  <div class="chd"><span class="ctitle">Participacion en sesiones</span></div>
+  <div id="partTable"></div>
+  <div style="display:flex;gap:10px;margin-top:7px;font-size:10px;color:var(--muted)">
+    <span><span class="pdot pd-t" style="display:inline-block;vertical-align:middle;margin-right:3px"></span>Entreno</span>
+    <span><span class="pdot pd-m" style="display:inline-block;vertical-align:middle;margin-right:3px"></span>Partido</span>
+    <span><span class="pdot pd-i" style="display:inline-block;vertical-align:middle;margin-right:3px"></span>Lesion</span>
+    <span><span class="pdot pd-a" style="display:inline-block;vertical-align:middle;margin-right:3px"></span>Ausente</span>
+  </div>
+</div>
+</div><!-- end teamContent -->
+</div>
+
+<!-- ===== JUGADOR ===== -->
+<div id="s-player" class="section">
+
+<!-- PLAYER HEADER -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+  <div style="display:flex;align-items:center;gap:13px">
+    <div id="pAvatar" style="width:52px;height:52px;border-radius:50%;background:var(--bluel);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--blue);border:2px solid #bfdbfe;flex-shrink:0">—</div>
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <h1 id="pName" style="font-size:20px;font-weight:700">—</h1>
+        <span id="pPos" class="pos">—</span>
+        <span id="pFatBadge" style="font-size:12px;font-weight:700;font-family:var(--m);padding:3px 10px;border-radius:6px">—</span>
+      </div>
+      <div id="pSub" style="font-size:11px;color:var(--muted);margin-top:2px">—</div>
+    </div>
+  </div>
+  <!-- Date filter -->
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span class="flbl">Filtrar por sesion:</span>
+    <select id="pDateFilter" class="fsel" onchange="renderPlayerFull()" style="min-width:170px">
+      <option value="all">Todas las sesiones</option>
+      <option value="s3">18 abr — vs Boston College</option>
+      <option value="s2">16 abr — Entreno</option>
+      <option value="s1">14 abr — Entreno</option>
+    </select>
+    <select id="pViewType" class="fsel" onchange="renderPlayerFull()">
+      <option value="cur">Sesion individual</option>
+      <option value="acc">Acumulado</option>
+      <option value="avg">Media</option>
+    </select>
+  </div>
+</div>
+
+<!-- KPI ROW (top metrics at a glance) -->
+<div class="g4" id="pKpiRow" style="margin-bottom:14px"></div>
+
+<!-- CHART INTERACTIVO + WELLNESS side by side -->
+<div class="g2">
+  <div class="card">
+    <div class="chd">
+      <span class="ctitle">Grafico por metrica</span>
+      <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+        <select id="pMetric" class="fsel" onchange="renderPlayerChart()" style="min-width:160px">
+          <option value="dist">Distancia (km)</option>
+          <option value="load">Session Load</option>
+          <option value="hir">HIR alta intensidad (m)</option>
+          <option value="spd">Sprint (m)</option>
+          <option value="acc">Aceleraciones</option>
+          <option value="dec">Deceleraciones</option>
+          <option value="topSpd">Top speed (km/h)</option>
+          <option value="sprEvt">N sprints</option>
+          <option value="ypm">m/min</option>
+        </select>
+        <div class="leg" style="margin:0">
+          <span class="li"><span class="ld" style="background:#bfdbfe"></span>Entreno</span>
+          <span class="li"><span class="ld" style="background:#2563eb"></span>Partido</span>
+        </div>
+      </div>
+    </div>
+    <div id="pChartRef" style="font-size:10px;color:var(--muted);margin-bottom:5px"></div>
+    <div class="chw" style="height:190px"><canvas id="cPlayerChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">Wellness &amp; RPE — historial</span></div>
+    <div class="chw" style="height:190px"><canvas id="cPlayerWell"></canvas></div>
+  </div>
+</div>
+
+<!-- BLOQUE CARGA -->
+<div class="blk-lbl"><div class="blk-dot" style="background:var(--blue)"></div>CARGA</div>
+<div class="g4" id="pLoadKpis" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card">
+    <div class="chd"><span class="ctitle">Distancia por sesion (km)</span><span class="cbadge">Ref 9-11 km partido</span></div>
+    <div class="chw" style="height:170px"><canvas id="cPDist"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">Session Load por sesion</span></div>
+    <div class="chw" style="height:170px"><canvas id="cPLoad"></canvas></div>
+  </div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="chd"><span class="ctitle">HIR + Sprint (m)</span><span class="cbadge">HIR ref 600-900 m</span></div>
+    <div class="chw" style="height:160px"><canvas id="cPHIR"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">Carga acumulada 7 dias (ACWR)</span></div>
+    <div class="chw" style="height:160px"><canvas id="cPLoad7"></canvas></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:7px" id="pACWRrow"></div>
+  </div>
+</div>
+
+<!-- BLOQUE INTENSIDAD -->
+<div class="blk-lbl"><div class="blk-dot" style="background:#f97316"></div>INTENSIDAD</div>
+<div class="g4" id="pIntKpis" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card">
+    <div class="chd"><span class="ctitle">Top speed por sesion (km/h)</span><span class="cbadge">Umbral sprint 25.2</span></div>
+    <div class="chw" style="height:160px"><canvas id="cPSpeed"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd"><span class="ctitle">N sprints + m/min</span></div>
+    <div class="leg"><span class="li"><span class="ld" style="background:#ddd6fe"></span>Sprints</span><span class="li"><span class="ll" style="background:#7c3aed"></span>m/min (eje dcho)</span></div>
+    <div class="chw" style="height:160px"><canvas id="cPSprints"></canvas></div>
+  </div>
+</div>
+
+<!-- BLOQUE MECANICO -->
+<div class="blk-lbl"><div class="blk-dot" style="background:var(--purple)"></div>ESTRES MECANICO</div>
+<div class="g4" id="pMechKpis" style="margin-bottom:13px"></div>
+<div class="card">
+  <div class="chd"><span class="ctitle">Accels + Decels por sesion</span><span class="cbadge">Bowen 2020 — Decels predictor lesion muscular</span></div>
+  <div class="leg"><span class="li"><span class="ld" style="background:#ddd6fe"></span>Accels</span><span class="li"><span class="ld" style="background:#a78bfa"></span>Decels</span></div>
+  <div class="chw" style="height:160px"><canvas id="cPAcc"></canvas></div>
+</div>
+
+<!-- BLOQUE WELLNESS DETALLE -->
+<div class="blk-lbl"><div class="blk-dot" style="background:var(--green)"></div>WELLNESS &amp; RPE</div>
+<div class="g4" id="pWellKpis" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card">
+    <div class="chd">
+      <span class="ctitle">Wellness matutino — historial</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn" style="font-size:9px;color:var(--green);border-color:var(--green)" onclick="openM('mFormsWell')">Conectar Form manana</button>
+      </div>
+    </div>
+    <div id="pWellConnStatus" style="font-size:10px;color:var(--muted);margin-bottom:6px"></div>
+    <div class="chw" style="height:170px"><canvas id="cPWellHist"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="chd">
+      <span class="ctitle">RPE post-sesion — historial</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn" style="font-size:9px;color:var(--blue);border-color:var(--blue)" onclick="openM('mFormsRPE')">Conectar Form RPE</button>
+      </div>
+    </div>
+    <div id="pRPEConnStatus" style="font-size:10px;color:var(--muted);margin-bottom:6px"></div>
+    <div class="chw" style="height:170px"><canvas id="cPRPEHist"></canvas></div>
+  </div>
+</div>
+<div class="card">
+  <div class="chd"><span class="ctitle">Tabla wellness completa</span></div>
+  <div class="tbl-w"><table class="tbl"><thead><tr><th>Sesion</th><th>Tipo</th><th>Sueno</th><th>Horas</th><th>Muscular</th><th>Fatiga</th><th>Estres</th><th>Readiness</th><th>RPE post</th><th>RPE Load</th></tr></thead><tbody id="pWellTable"></tbody></table></div>
+</div>
+
+<!-- INFO JUGADOR -->
+<div class="g2" style="margin-top:4px">
+  <div class="card"><div class="chd"><span class="ctitle">Estadisticas temporada</span></div><div id="pStatsContent"></div></div>
+  <div class="card"><div class="chd"><span class="ctitle">Participacion &amp; Lesiones</span></div><div id="pPartContent"></div></div>
+</div>
+
+<div id="playerContent"></div>
+</div>
+
+<!-- ===== WELLNESS ===== -->
+<div id="s-wellness" class="section">
+<div style="margin-bottom:15px"><h1 style="font-size:19px;font-weight:700">Wellness del equipo</h1><div style="font-size:11px;color:var(--muted)">Cuestionarios matutinos + RPE &middot; escala 1&ndash;10</div></div>
+<div class="g4" id="wellKpis" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card"><div class="chd"><span class="ctitle">Readiness score</span><span class="cbadge">Verde &ge;70 &middot; Amarillo 50&ndash;70 &middot; Rojo &lt;50</span></div><div class="chw" style="height:195px"><canvas id="cReadiness"></canvas></div></div>
+  <div class="card"><div class="chd"><span class="ctitle">Tendencia wellness 5 dias</span></div><div class="leg"><span class="li"><span class="ll" style="background:#2563eb"></span>Sueno</span><span class="li"><span class="ll" style="background:#d97706"></span>Fatiga</span><span class="li"><span class="ll" style="background:#dc2626"></span>Estres</span><span class="li"><span class="ll" style="background:#7c3aed"></span>Muscular</span></div><div class="chw" style="height:195px"><canvas id="cWellTrend"></canvas></div></div>
+</div>
+<div class="g2">
+  <div class="card"><div class="chd"><span class="ctitle">RPE pre vs post sesion</span></div><div class="leg"><span class="li"><span class="ld" style="background:#fed7aa"></span>RPE manana</span><span class="li"><span class="ld" style="background:#bfdbfe"></span>RPE post</span></div><div class="chw" style="height:195px"><canvas id="cRPE"></canvas></div></div>
+  <div class="card"><div class="chd"><span class="ctitle">GPS Load vs RPE Load (Foster)</span></div><div class="leg"><span class="li"><span class="ld" style="background:#bfdbfe"></span>GPS Load</span><span class="li"><span class="ld" style="background:#fed7aa"></span>RPE Load</span></div><div class="chw" style="height:195px"><canvas id="cRPEvsGPS"></canvas></div></div>
+</div>
+<div class="card">
+  <div class="chd"><span class="ctitle">Cuestionario por jugador</span><div style="display:flex;gap:7px"><button class="btn btng" onclick="openM('mForms')" style="font-size:10px">Conectar Forms</button><label class="btn" style="font-size:10px;cursor:pointer">Subir CSV <input type="file" accept=".csv" style="display:none" onchange="loadWellnessCSV(this)"></label></div></div>
+  <div id="wellnessImportStatus"></div>
+  <div class="tbl-w"><table class="tbl"><thead><tr><th>Jugador</th><th>Sueno</th><th>Horas</th><th>Muscular</th><th>Fatiga</th><th>Estres</th><th>Readiness</th><th>RPE post</th></tr></thead><tbody id="wellTbl"></tbody></table></div>
+</div>
+</div>
+
+<!-- ===== ESTADISTICAS ===== -->
+<div id="s-stats" class="section">
+<div style="margin-bottom:15px"><h1 style="font-size:19px;font-weight:700">Estadisticas</h1><div style="font-size:11px;color:var(--muted)">Goles, asistencias, minutos &mdash; temporada 2025&ndash;26</div></div>
+<div class="g4" id="statsKpis" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card"><div class="chd"><span class="ctitle">Minutos jugados</span></div><div class="chw" style="height:210px"><canvas id="cMins"></canvas></div></div>
+  <div class="card"><div class="chd"><span class="ctitle">Goles + asistencias</span></div><div class="leg"><span class="li"><span class="ld" style="background:#a7f3d0"></span>Goles</span><span class="li"><span class="ld" style="background:#bbf7d0"></span>Asist</span></div><div class="chw" style="height:210px"><canvas id="cGoals"></canvas></div></div>
+</div>
+<div class="card"><div class="chd"><span class="ctitle">Estadisticas individuales</span></div><div class="tbl-w"><table class="tbl"><thead><tr><th>Jugador</th><th>Pos</th><th>PJ</th><th>Min</th><th>Goles</th><th>Asist</th><th>G+A</th><th>G/90</th><th>A/90</th><th>Am</th><th>Ro</th></tr></thead><tbody id="statsTbl"></tbody></table></div></div>
+<div class="card"><div class="chd"><span class="ctitle">Registro de partidos</span></div><div class="tbl-w"><table class="tbl"><thead><tr><th>Fecha</th><th>Rival</th><th>Comp</th><th>Marcador</th><th>Res</th></tr></thead><tbody id="matchTbl"></tbody></table></div></div>
+</div>
+
+<!-- ===== FATIGA ===== -->
+<div id="s-fatigue" class="section">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;flex-wrap:wrap;gap:10px">
+  <div><h1 style="font-size:19px;font-weight:700">Fatiga &amp; Riesgo</h1><div style="font-size:11px;color:var(--muted)">Modelo compuesto cientifico</div></div>
+  <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+    <label class="btn" style="cursor:pointer;display:flex;align-items:center;gap:6px" id="pdfBtn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span id="pdfBtnTxt">Subir PDF PlayerData</span>
+      <input type="file" accept=".pdf" id="pdfInput2" style="display:none" onchange="handlePDF(this)">
+    </label>
+    <button class="btn" style="color:var(--green);border-color:var(--green)" onclick="openM('mManual')">+ Manual</button>
+  </div>
+</div>
+<div id="pdfStatus" style="display:none;margin-bottom:12px"></div>
+<div style="background:var(--white);border:1px solid var(--brd);border-radius:var(--r);padding:12px 15px;margin-bottom:13px;font-size:11px">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+    <div><div style="font-weight:700;color:var(--blue);margin-bottom:3px">Load Score (40%)</div><div style="color:var(--muted)">Dist + Load + HIR + Sprint + m/min normalizado vs media equipo</div></div>
+    <div><div style="font-weight:700;color:var(--purple);margin-bottom:3px">Mech Stress (25%)</div><div style="color:var(--muted)">Accels + Decels + HiEvt &mdash; Bowen 2020: decels predictor lesion muscular</div></div>
+    <div><div style="font-weight:700;color:var(--amber);margin-bottom:3px">ACWR Risk (20%)</div><div style="color:var(--muted)">&lt;0.8=30 &middot; 0.8-1.3=50 &middot; 1.3-1.5=75 &middot; &gt;1.5=95 &mdash; Gabbett 2016</div></div>
+    <div><div style="font-weight:700;color:var(--green);margin-bottom:3px">Recovery (15%)</div><div style="color:var(--muted)">(10 - media_wellness) x 10 &mdash; Hooper Index &middot; Meeusen 2013</div></div>
+  </div>
+</div>
+<div id="fatKpis" style="margin-bottom:13px"></div>
+<div id="fatAlert" style="margin-bottom:13px"></div>
+<div class="g2">
+  <div class="card"><div class="chd"><span class="ctitle">Fatigue Score &mdash; ordenado por riesgo</span><span class="cbadge">Riesgo &ge;70 &middot; Injury &ge;85</span></div><div class="leg"><span class="li"><span class="ld" style="background:#bbf7d0"></span>Fresh</span><span class="li"><span class="ld" style="background:#fde68a"></span>Normal</span><span class="li"><span class="ld" style="background:#fed7aa"></span>Fatigado</span><span class="li"><span class="ld" style="background:#fca5a5"></span>High Risk</span></div><div class="chw" style="height:240px"><canvas id="cFatigue"></canvas></div></div>
+  <div class="card"><div class="chd"><span class="ctitle">Componentes apilados</span></div><div class="leg"><span class="li"><span class="ld" style="background:#bfdbfe"></span>Load 40%</span><span class="li"><span class="ld" style="background:#ddd6fe"></span>Mech 25%</span><span class="li"><span class="ld" style="background:#fde68a"></span>ACWR 20%</span><span class="li"><span class="ld" style="background:#a7f3d0"></span>Recov 15%</span></div><div class="chw" style="height:240px"><canvas id="cFatComp"></canvas></div></div>
+</div>
+<div class="g2">
+  <div class="card"><div class="chd"><span class="ctitle">ACWR vs Fatigue &mdash; mapa de riesgo</span></div><div class="chw" style="height:220px"><canvas id="cScatter"></canvas></div></div>
+  <div class="card"><div class="chd"><span class="ctitle">MechStress vs LoadScore</span></div><div class="chw" style="height:220px"><canvas id="cMechLoad"></canvas></div></div>
+</div>
+<div class="card"><div class="chd"><span class="ctitle">Tabla fatiga</span><span id="pdfSrc" style="font-size:10px;color:var(--muted)">Datos vs Boston College &middot; Sube PDF o entrada manual</span></div>
+<div class="tbl-w"><table class="tbl"><thead><tr><th>Jugador</th><th>Pos</th><th>LoadScore</th><th>MechStress</th><th>ACWR</th><th>Recovery</th><th>Fatigue</th><th>Estado</th><th>Alerta</th></tr></thead><tbody id="fatTbl"></tbody></table></div></div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ====== CONVERSIONES ======
+const YD2M=0.9144,MI2KM=1.60934,MPH2KMH=1.60934,YPM2MPM=0.9144;
+const mi2km=v=>+(v*MI2KM).toFixed(2);
+const yd2m=v=>Math.round(v*YD2M);
+const mph2kmh=v=>+(v*MPH2KMH).toFixed(1);
+const ypm2mpm=v=>Math.round(v*YPM2MPM);
+
+// ====== PLAYERS DATA (imperial raw, display in metric) ======
+// ====== DATOS — cargados desde localStorage o vacios ======
+function blankPlayer(name,init,pos){
+  return {name,init,pos,mins:0,dist:0,load:0,wl:0,spd:0,hir:0,hiEvt:0,ypm:100,sprEvt:0,
+    topSpd:0,acc:0,dec:0,h1hir:0,h2hir:0,
+    hist7:[0,0,0,0,0,0,0],hist28avg:0,
+    well:{sq:7,sh:8,mu:3,fa:3,st:3,rpe:null}};
+}
+
+// Cargar jugadores desde localStorage o empezar vacio
+function loadPlayers(){
+  try{
+    const saved=localStorage.getItem("bsoc_players");
+    if(saved){const p=JSON.parse(saved);if(p&&p.length>0)return p;}
+  }catch(e){}
+  return [];
+}
+function savePlayers(){
+  try{localStorage.setItem("bsoc_players",JSON.stringify(players));}catch(e){}
+}
+let players=loadPlayers();
+
+const SESSION_HIST=[];
+const SH_DATA={};
+const METRIC_IDX={dist:0,load:1,hir:2,spd:3,acc:4,dec:5,topSpd:6,sprEvt:7,ypm:8};
+const METRIC_REF={
+  dist:{min:9,max:11,unit:"km"},load:{min:1500,max:2500,unit:""},
+  hir:{min:600,max:900,unit:"m"},spd:{min:150,max:300,unit:"m"},
+  topSpd:{min:25.2,max:32,unit:"km/h"},sprEvt:{min:10,max:30,unit:""},
+  ypm:{min:100,max:120,unit:"m/min"},acc:null,dec:null
+};
+
+let statsData=[];
+let matchData=[];
+const partMock={};
+let injData=[];
+const PC={MID:"pMID",FWD:"pFWD",DEF:"pos-sub",WIN:"pWIN",GK:"pGK"};
+const PL={MID:"MID",FWD:"FWD",DEF:"DEF",WIN:"WIN",GK:"GK"};
+
+// ====== STATE ======
+let activePlayer=0;
+let viewMode="team";
+let filterPlayerIdx=4;
+let sortKey=null;
+let sortAsc=true;
+const charts={};
+
+// ====== FATIGUE ENGINE ======
+function norm(arr){const m=arr.reduce((a,b)=>a+b,0)/arr.length;return arr.map(v=>m>0?v/m*100:100);}
+function fatigue(p){
+  if(!players||players.length===0)return 0;
+  const ls=norm(players.map(x=>0.25*x.load+0.20*x.dist*100+0.25*x.hir+0.15*x.spd+0.15*x.ypm));
+  const ms=norm(players.map(x=>0.4*x.acc+0.4*x.dec+0.2*x.hiEvt));
+  const i=players.indexOf(p);
+  const ls2=Math.min(ls[i],150);
+  const ms2=Math.min(ms[i],150);
+  const ar=p.acwr<0.8?30:p.acwr<=1.3?50:p.acwr<=1.5?75:95;
+  const rs=Math.max(0,(10-((p.well.sq+p.well.mu+p.well.fa+p.well.st)/4))*10);
+  return Math.min(Math.round(0.40*ls2+0.25*ms2+0.20*ar+0.15*rs),100);
+}
+
+// Pre-compute derived fields
+players.forEach(p=>{
+  p.distKm=mi2km(p.dist);
+  p.hirM=yd2m(p.hir);
+  p.spdM=yd2m(p.spd);
+  p.topSpdKmh=mph2kmh(p.topSpd);
+  p.ypmM=ypm2mpm(p.ypm);
+  p.hirRatio=p.dist>0?+(p.hir/(p.dist*1760)*100).toFixed(1):0;
+  p.acute7=p.hist7.reduce((a,b)=>a+b,0);
+  p.acwr=+(p.acute7/p.hist28avg).toFixed(2);
+  const h2=p.h1hir>0?(p.h2hir/p.h1hir*100):(p.h2hir>0?110:100);
+  p.fatIdx=+Math.min(h2,120).toFixed(1);
+  p.readiness=Math.max(40,Math.min(100,Math.round(((p.well.sq/10)*0.30+(1-p.well.fa/10)*0.25+(1-p.well.mu/10)*0.25+(1-p.well.st/10)*0.20)*100)));
+});
+players.forEach(p=>{
+  p.fat=fatigue(p);
+  p.adPerKm=+((p.acc+p.dec)/p.distKm).toFixed(1);
+  p.fatStatus=p.fat<30?"Fresh":p.fat<55?"Normal":p.fat<70?"Fatigado":p.fat<85?"High Risk":"Injury Risk";
+  p.fatCol=p.fat<30?"#059669":p.fat<55?"#d97706":p.fat<70?"#f97316":p.fat<85?"#dc2626":"#991b1b";
+  p.fatBg=p.fat<30?"#bbf7d0":p.fat<55?"#fde68a":p.fat<70?"#fed7aa":"#fca5a5";
+});
+
+// ====== PLAYER MANAGEMENT ======
+function addPlayer(){
+  const name=(document.getElementById("apName")||{value:""}).value.trim();
+  const init=(document.getElementById("apInit")||{value:""}).value.trim().toUpperCase();
+  const pos=(document.getElementById("apPos")||{value:"MID"}).value;
+  const err=document.getElementById("apError");
+  if(!name){if(err){err.textContent="El nombre es obligatorio";err.style.display="block";}return;}
+  if(!init){if(err){err.textContent="Las iniciales son obligatorias";err.style.display="block";}return;}
+  if(players.find(p=>p.init===init)){if(err){err.textContent="Ya existe un jugador con esas iniciales";err.style.display="block";}return;}
+  if(err)err.style.display="none";
+  const p=blankPlayer(name,init,pos);
+  players.push(p);
+  // Recompute derived fields
+  p.distKm=0;p.hirM=0;p.spdM=0;p.topSpdKmh=0;p.ypmM=100;p.hirRatio=0;p.acute7=0;p.acwr=0;p.fatIdx=100;p.readiness=70;p.adPerKm=0;
+  p.fat=fatigue(p);p.fatStatus="Fresh";p.fatCol="#059669";p.fatBg="#bbf7d0";
+  statsData.push({name,pos,pj:0,mins:0,goles:0,asist:0,am:0,ro:0});
+  partMock[init]=[];
+  savePlayers();
+  // Refresh selects
+  ["sbPlayer","fPlayer","manP","cmjP","injP"].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML="";
+    players.forEach((pl,i)=>{const o=document.createElement("option");o.value=i;o.textContent=pl.name;el.appendChild(o);});
+  });
+  closeM("mAddPlayer");
+  // Clear form
+  ["apName","apInit"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  renderTeam();
+  alert("✅ "+name+" añadido a la plantilla");
+}
+
+function openRoster(){
+  const rc=document.getElementById("rosterCount");
+  if(rc)rc.textContent=players.length;
+  const list=document.getElementById("rosterList");
+  if(!list)return;
+  if(players.length===0){
+    list.innerHTML='<div style="text-align:center;padding:24px;color:var(--hint);font-size:12px">Sin jugadores. Añade el primero con el botón de arriba.</div>';
+  } else {
+    list.innerHTML=players.map((p,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--brd)">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--bluel);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0">${p.init}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px">${p.name}</div>
+          <div style="font-size:10px;color:var(--muted)">${PL[p.pos]||p.pos}</div>
+        </div>
+        <span style="font-size:12px;font-weight:700;font-family:var(--m);color:${p.fatCol}">${p.fat}</span>
+        <button onclick="removePlayer(${i})" style="background:none;border:none;cursor:pointer;color:var(--hint);font-size:16px;padding:2px 6px" title="Eliminar">&#10005;</button>
+      </div>`).join("");
+  }
+  openM("mRoster");
+}
+
+function removePlayer(idx){
+  const p=players[idx];
+  if(!confirm("Eliminar a "+p.name+" de la plantilla?"))return;
+  players.splice(idx,1);
+  statsData=statsData.filter(s=>s.name!==p.name);
+  delete partMock[p.init];
+  if(activePlayer>=players.length)activePlayer=Math.max(0,players.length-1);
+  savePlayers();
+  openRoster(); // refresh modal
+  renderTeam();
+}
+
+// ====== EMPTY STATE ======
+function renderEmptyState(){
+  const main=document.getElementById("teamContent");
+  if(!main)return;
+  main.innerHTML=`<div style="text-align:center;padding:60px 20px">
+    <div style="font-size:48px;margin-bottom:16px">⚽</div>
+    <div style="font-size:18px;font-weight:700;color:var(--txt);margin-bottom:8px">Sin jugadores todavia</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px">Añade tu plantilla para empezar a ver datos</div>
+    <button class="btn btnp" style="font-size:13px;padding:10px 24px" onclick="openM('mAddPlayer')">+ Añadir primer jugador</button>
+  </div>`;
+}
+
+// ====== INIT ======
+function init(){
+  // Recompute derived fields for all loaded players
+  players.forEach(p=>{
+    p.distKm=p.distKm||(p.dist?mi2km(p.dist):0);
+    p.hirM=p.hirM||(p.hir?yd2m(p.hir):0);
+    p.spdM=p.spdM||(p.spd?yd2m(p.spd):0);
+    p.topSpdKmh=p.topSpdKmh||(p.topSpd?mph2kmh(p.topSpd):0);
+    p.ypmM=p.ypmM||(p.ypm?ypm2mpm(p.ypm):100);
+    p.hirRatio=p.dist>0?+(p.hir/(p.dist*1760)*100).toFixed(1):0;
+    p.hist7=p.hist7||[0,0,0,0,0,0,0];
+    p.acute7=p.hist7.reduce((a,b)=>a+b,0);
+    p.acwr=p.hist28avg>0?+(p.acute7/p.hist28avg).toFixed(2):0;
+    p.fatIdx=100;
+    p.readiness=Math.max(40,Math.min(100,Math.round(((p.well.sq/10)*.30+(1-p.well.fa/10)*.25+(1-p.well.mu/10)*.25+(1-p.well.st/10)*.20)*100)));
+    p.adPerKm=p.distKm>0?+((p.acc+p.dec)/p.distKm).toFixed(1):0;
+    p.fat=fatigue(p);
+    p.fatStatus=p.fat<30?"Fresh":p.fat<55?"Normal":p.fat<70?"Fatigado":p.fat<85?"High Risk":"Injury Risk";
+    p.fatCol=p.fat<30?"#059669":p.fat<55?"#d97706":p.fat<70?"#f97316":p.fat<85?"#dc2626":"#991b1b";
+    p.fatBg=p.fat<30?"#bbf7d0":p.fat<55?"#fde68a":p.fat<70?"#fed7aa":"#fca5a5";
+    if(!statsData.find(s=>s.name===p.name))statsData.push({name:p.name,pos:p.pos,pj:0,mins:0,goles:0,asist:0,am:0,ro:0});
+  });
+  ["sbPlayer","fPlayer","manP","cmjP","injP"].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML="";
+    players.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=p.name;el.appendChild(o);});
+    if(id==="sbPlayer"||id==="fPlayer")el.value=Math.min(activePlayer,Math.max(0,players.length-1));
+  });
+  if(players.length===0){renderEmptyState();}
+  else{renderTeam();renderWellness();renderStats();}
+  updateFilterLabel();
+  loadSavedForms();
+}
+
+// ====== NAVIGATION ======
+function goTo(id,el){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".ni").forEach(n=>n.classList.remove("active"));
+  document.getElementById("s-"+id).classList.add("active");
+  if(el)el.classList.add("active");
+  if(id==="player"){renderPlayerView();renderPlayerChart();}
+  if(id==="fatigue")renderFatigue(players);
+}
+function onSbPlayer(idx){
+  activePlayer=parseInt(idx);
+  filterPlayerIdx=activePlayer;
+  const el=document.getElementById("fPlayer");
+  if(el)el.value=idx;
+  if(document.getElementById("s-player").classList.contains("active")){
+    renderPlayerView();renderPlayerChart();
+  } else goTo("player",document.getElementById("nav-player"));
+}
+
+// ====== FILTER BAR ======
+function setMode(mode){
+  viewMode=mode;
+  const on="on",off="off";
+  document.getElementById("bTeam").className="mbtn "+(mode==="team"?on:off);
+  document.getElementById("bPlayer").className="mbtn "+(mode==="player"?on:off);
+  const pfw=document.getElementById("pfWrap");
+  const posw=document.getElementById("posWrap");
+  const panel=document.getElementById("playerPanel");
+  const sa=document.getElementById("statusArea");
+  const tc=document.getElementById("teamContent");
+  if(mode==="team"){
+    pfw.style.display="none";
+    posw.style.display="flex";
+    if(panel)panel.style.display="none";
+    if(sa)sa.style.display="block";
+    if(tc)tc.style.display="block";
+  } else {
+    pfw.style.display="flex";
+    posw.style.display="none";
+    if(sa)sa.style.display="none";
+    if(tc)tc.style.display="none";
+    renderPlayerDetailPanel();
+  }
+  updateFilterLabel();
+}
+function onFPlayer(idx){
+  filterPlayerIdx=parseInt(idx);
+  activePlayer=filterPlayerIdx;
+  const sb=document.getElementById("sbPlayer");
+  if(sb)sb.value=idx;
+  updateFilterLabel();
+  renderPlayerDetailPanel();
+}
+function onFChange(){updateFilterLabel();if(viewMode==="player")renderPlayerDetailPanel();}
+function updateFilterLabel(){
+  const fs=document.getElementById("fSession");
+  const fv=document.getElementById("fView");
+  if(!fs||!fv)return;
+  const sL=fs.options[fs.selectedIndex].text;
+  const vL=fv.options[fv.selectedIndex].text;
+  const pN=viewMode==="player"?" &middot; <strong>"+players[filterPlayerIdx].name+"</strong>":"";
+  const el=document.getElementById("filterInfo");
+  if(el)el.innerHTML="Vista: <strong>"+(viewMode==="team"?"Equipo":"Jugador")+"</strong>"+pN+" &middot; Sesion: <strong>"+sL+"</strong> &middot; Ver: <strong>"+vL+"</strong>";
+}
+function filterPos(pos){
+  document.querySelectorAll("#tblBody tr").forEach(r=>{
+    const init=r.dataset.init;
+    const p=players.find(x=>x.init===init);
+    r.style.opacity=(pos==="all"||!p||p.pos===pos)?"1":"0.3";
+  });
+}
+
+// ====== STATUS PILLS ======
+function renderStatusPills(){
+  if(players.length===0)return;
+  const el=document.getElementById("statusArea");
+  if(!el||viewMode!=="team")return;
+  const key=(document.getElementById("fRank")||{value:"fatigue"}).value;
+  const sorted=[...players].sort((a,b)=>b[key==="fatigue"?"fat":key]-a[key==="fatigue"?"fat":key]);
+  const dangers=players.filter(p=>p.fat>=70||p.acwr>1.5);
+  const warns=players.filter(p=>(p.fat>=55&&p.fat<70)||(p.acwr>1.3&&p.acwr<=1.5));
+
+  let html="";
+  if(dangers.length>0){
+    html+=`<div class="abar abar-r" style="margin-bottom:8px">
+      <span>&#128680; ${dangers.length} en riesgo:</span>
+      ${dangers.map(p=>`<span style="background:#fff;border:1px solid #fca5a5;padding:2px 8px;border-radius:4px;font-size:11px">${p.name} &middot; Fat ${p.fat}${p.acwr>1.5?" &middot; ACWR "+p.acwr:""}</span>`).join("")}
+    </div>`;
+  } else if(warns.length>0){
+    html+=`<div class="abar abar-a" style="margin-bottom:8px">&#9888;&#65039; Precaucion: ${warns.map(p=>p.name).join(", ")}</div>`;
+  } else {
+    html+=`<div class="abar abar-g" style="margin-bottom:8px">&#9989; Equipo en zona segura</div>`;
+  }
+  html+=`<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 0;border-bottom:1px solid var(--brd);margin-bottom:12px">
+    <span style="font-size:9px;font-weight:700;color:var(--hint);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;flex-shrink:0">Fatigue &#9660;</span>
+    ${sorted.map(p=>{
+      const cls=p.fat>=70||p.acwr>1.5?"pill-d":p.fat>=55||p.acwr>1.3?"pill-r":p.fat>=35?"pill-a":"pill-g";
+      return `<span class="pill ${cls}" onclick="gotoP('${p.name}')"><span style="font-family:var(--m);font-size:12px;font-weight:700">${p.fat}</span><span style="opacity:.75;font-size:10px">${p.init}</span>${p.acwr>1.3?`<span style="font-size:9px;opacity:.8">&#9888;</span>`:""}</span>`;
+    }).join("")}
+  </div>`;
+  el.innerHTML=html;
+}
+
+// ====== CHART BASE ======
+const CB=()=>({responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a2235",titleColor:"#e8edf4",bodyColor:"#9aa5b4",borderColor:"#e2e6ed",borderWidth:1}},
+  scales:{x:{ticks:{color:"#6b7a92",font:{size:10},maxRotation:0},grid:{color:"rgba(0,0,0,0.04)"},border:{display:false}},
+          y:{ticks:{color:"#6b7a92",font:{size:10}},grid:{color:"rgba(0,0,0,0.04)"},border:{display:false}}}});
+function refLine(val,color,dash=[4,3]){
+  return{type:"line",data:players.map(()=>val),borderColor:color,borderWidth:1.5,borderDash:dash,pointRadius:0};
+}
+function mkChart(id,cfg){if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el)return;charts[id]=new Chart(el,cfg);}
+
+// Colors: partido=dark blue, entreno=light blue
+const colBar=(type)=>type==="match"?"#2563eb":"#bfdbfe";
+const colBrd=(type)=>type==="match"?"#1d4ed8":"#2563eb";
+
+// ====== TEAM CHARTS ======
+function renderTeam(){
+  if(players.length===0){renderEmptyState();return;}
+  renderStatusPills();
+  const inits=players.map(p=>p.init);
+  const cb=CB();
+  const cb0={...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0}}};
+  const avgDist=+(players.reduce((a,p)=>a+p.distKm,0)/players.length).toFixed(1);
+  const avgHir=Math.round(players.reduce((a,p)=>a+p.hirM,0)/players.length);
+  document.getElementById("teamAcwrAvg").textContent="Media: "+(players.reduce((a,p)=>a+p.acwr,0)/players.length).toFixed(2);
+
+  // KPI row
+  document.getElementById("kpiLoad").innerHTML=[
+    {l:"Dist media",v:avgDist+" km",s:"Ref 9-11 km partido",c:avgDist>=9?"ok":"warn"},
+    {l:"Load avg",  v:Math.round(players.reduce((a,p)=>a+p.load,0)/players.length).toLocaleString(),s:"Session Load medio",c:"ok"},
+    {l:"HIR media", v:avgHir+" m",s:"Ref 600-900 m Malone 2019",c:avgHir>=600?"ok":"warn"},
+    {l:"Sprint avg", v:Math.round(players.reduce((a,p)=>a+p.spdM,0)/players.length)+" m",s:"Ref 150-300 m",c:"warn"}
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${k.c==="ok"?"green":k.c==="warn"?"amber":"red"})"><div class="km-l">${k.l}</div><div class="km-v">${k.v}</div><div class="km-s">${k.s}</div></div>`).join("");
+
+  // Current session is match (s3), so all bars = partido color for last session
+  const isMatch=true; // vs BC
+  const barBg=players.map(()=>isMatch?"#2563eb":"#bfdbfe");
+  const barBd=players.map(()=>isMatch?"#1d4ed8":"#2563eb");
+
+  mkChart("cDist",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.distKm),backgroundColor:barBg,borderColor:barBd,borderWidth:1.5,borderRadius:4},{...refLine(avgDist,"#dc2626"),data:players.map(()=>avgDist)},{...refLine(9,"#059669",[6,3]),data:players.map(()=>9)}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,max:13}}}});
+  mkChart("cHIR",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.hirM),backgroundColor:"#a7f3d0",borderColor:"#059669",borderWidth:1.5,borderRadius:4},{data:players.map(p=>p.spdM),backgroundColor:"#34d399",borderColor:"#10b981",borderWidth:1,borderRadius:4},{...refLine(600,"#d97706",[4,3]),data:players.map(()=>600)}]},options:cb0});
+  mkChart("cSpeed",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.topSpdKmh),backgroundColor:"#cffafe",borderColor:"#0891b2",borderWidth:1.5,borderRadius:4},{...refLine(25.2,"#f97316",[6,3]),data:players.map(()=>25.2)}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,min:20,max:36}}}});
+  const fatIdxColors=players.map(p=>p.fatIdx<85?"#fca5a5":"#bbf7d0");
+  mkChart("cFatIdx",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.fatIdx),backgroundColor:fatIdxColors,borderRadius:4},{...refLine(85,"#94a3b8"),data:players.map(()=>85)}]},options:cb0});
+  mkChart("cAcc",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.acc),backgroundColor:"#ddd6fe",borderColor:"#7c3aed",borderWidth:1.5,borderRadius:4},{data:players.map(p=>p.dec),backgroundColor:"#c4b5fd",borderColor:"#a78bfa",borderWidth:1,borderRadius:4}]},options:cb0});
+  const acwrBg=players.map(p=>p.acwr>1.5?"#fca5a5":p.acwr>1.3?"#fde68a":"#bbf7d0");
+  mkChart("cACWR",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.acwr),backgroundColor:acwrBg,borderRadius:4},{...refLine(0.8,"#059669"),data:players.map(()=>0.8)},{...refLine(1.3,"#d97706"),data:players.map(()=>1.3)},{...refLine(1.5,"#dc2626",[5,3]),data:players.map(()=>1.5)}]},options:{...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0.2,max:2.3}}}});
+
+  // Ranking
+  const ranked=[...players].sort((a,b)=>b.fat-a.fat);
+  const mxF=ranked[0].fat;
+  document.getElementById("rankList").innerHTML=ranked.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--brd);cursor:pointer" onclick="gotoP('${p.name}')">
+      <span style="font-size:10px;color:var(--hint);font-family:var(--m);width:14px">${i+1}</span>
+      <span style="flex:1;font-size:11px;font-weight:600">${p.name} <span class="pos ${PC[p.pos]}">${PL[p.pos]}</span></span>
+      <div style="width:60px"><div style="height:4px;background:var(--brd);border-radius:2px"><div style="height:4px;border-radius:2px;background:${p.fatCol};width:${Math.round(p.fat/mxF*100)}%"></div></div></div>
+      <span style="font-size:12px;font-family:var(--m);font-weight:700;color:${p.fatCol};width:22px">${p.fat}</span>
+    </div>`).join("");
+
+  // Team trend (all sessions, partido vs entreno colors)
+  const tLabels=SESSION_HIST.map(s=>s.date+" "+(s.type==="match"?"(P)":"(E)"));
+  const tBg=SESSION_HIST.map(s=>colBar(s.type));
+  const tBd=SESSION_HIST.map(s=>colBrd(s.type));
+  const tData=SESSION_HIST.map((s,si)=>{
+    const vals=players.map(p=>{const d=SH_DATA[p.init];return d?d[si][0]:0;}).filter(v=>v>0);
+    return vals.length?+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2):0;
+  });
+  mkChart("cTrend",{type:"bar",data:{labels:tLabels,datasets:[{data:tData,backgroundColor:tBg,borderColor:tBd,borderWidth:2,borderRadius:5}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,max:12}}}});
+
+  renderTable();
+  renderPart();
+}
+
+// ====== TABLE ======
+function renderTable(){
+  let data=[...players];
+  if(sortKey)data.sort((a,b)=>sortAsc?((a[sortKey]||0)-(b[sortKey]||0)):((b[sortKey]||0)-(a[sortKey]||0)));
+  const avgD=+(players.reduce((a,p)=>a+p.distKm,0)/players.length).toFixed(1);
+  document.getElementById("tblBody").innerHTML=data.map(p=>`<tr data-init="${p.init}" style="cursor:pointer" onclick="gotoP('${p.name}')">
+    <td style="font-weight:600">${p.name}</td>
+    <td><span class="pos ${PC[p.pos]}">${PL[p.pos]}</span></td>
+    <td class="mn">${p.mins>0?p.mins+"'":"90'"}</td>
+    <td class="mn"><span class="${p.distKm>=avgD?"up":"dn"}">${p.distKm}</span></td>
+    <td class="mn">${p.load.toLocaleString()}</td>
+    <td class="mn"><span class="${p.hirM>=600?"up":p.hirM>=400?"":"dn"}">${p.hirM}</span></td>
+    <td class="mn">${p.spdM}</td>
+    <td class="mn" style="color:${p.topSpdKmh>=25.2?"var(--green)":"var(--txt)"}">${p.topSpdKmh}</td>
+    <td class="mn">${p.acc}</td>
+    <td class="mn" style="color:${p.dec>100?"var(--red)":p.dec>80?"var(--amber)":"var(--txt)"}">${p.dec}</td>
+    <td class="mn"><span style="color:${p.acwr>1.5?"var(--red)":p.acwr>1.3?"var(--amber)":"var(--green)"};font-weight:700">${p.acwr}</span></td>
+    <td class="mn" style="color:${p.hirRatio>=8&&p.hirRatio<=12?"var(--green)":"var(--amber)"}">${p.hirRatio}%</td>
+    <td class="mn">${p.adPerKm}</td>
+    <td class="mn" style="font-weight:700;color:${p.fatCol}">${p.fat}</td>
+  </tr>`).join("");
+}
+function srt(k){if(sortKey===k)sortAsc=!sortAsc;else{sortKey=k;sortAsc=false;}renderTable();}
+function gotoP(name){
+  const i=players.findIndex(p=>p.name===name);if(i<0)return;
+  activePlayer=i;filterPlayerIdx=i;
+  document.getElementById("sbPlayer").value=i;
+  const el=document.getElementById("fPlayer");if(el)el.value=i;
+  goTo("player",document.getElementById("nav-player"));
+}
+function renderPart(){
+  document.getElementById("partTable").innerHTML="<table class='tbl'><thead><tr><th>Jugador</th><th>Pos</th><th>Sesiones</th><th>%</th></tr></thead><tbody>"+
+  players.map(p=>{
+    const pts=partMock[p.init]||[];
+    const pct=Math.round(pts.filter(v=>v>0&&v<3).length/pts.length*100);
+    return`<tr><td style="font-weight:600">${p.name}</td><td><span class="pos ${PC[p.pos]}">${PL[p.pos]}</span></td>
+      <td><div style="display:flex;gap:2px">${pts.map(v=>`<span class="pdot ${v===1?"pd-t":v===2?"pd-m":v===3?"pd-i":"pd-a"}"></span>`).join("")}</div></td>
+      <td style="font-family:var(--m);font-weight:700;color:${pct>=80?"var(--green)":pct>=60?"var(--amber)":"var(--red)"}">${pct}%</td></tr>`;
+  }).join("")+"</tbody></table>";
+}
+
+// ====== PLAYER CHART (interactive) ======
+function renderPlayerChart(){
+  const p=players[activePlayer];
+  if(!p)return;
+  const mkey=document.getElementById("pMetric").value;
+  const idx=METRIC_IDX[mkey];
+  const ref=METRIC_REF[mkey];
+  const labels=SESSION_HIST.map(s=>s.date+" "+(s.type==="match"?"(P)":"(E)"));
+  const pData=SH_DATA[p.init];
+  const vals=pData?pData.map(row=>row[idx]):SESSION_HIST.map(()=>0);
+  const bgColors=SESSION_HIST.map(s=>colBar(s.type));
+  const bdColors=SESSION_HIST.map(s=>colBrd(s.type));
+  const datasets=[{label:mkey,data:vals,backgroundColor:bgColors,borderColor:bdColors,borderWidth:2,borderRadius:5}];
+  if(ref){
+    datasets.push({type:"line",data:labels.map(()=>ref.min),borderColor:"#059669",borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,label:"Ref min"});
+    if(ref.max)datasets.push({type:"line",data:labels.map(()=>ref.max),borderColor:"#d97706",borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false,label:"Ref max"});
+    const refEl=document.getElementById("pChartRef");
+    if(refEl)refEl.innerHTML="<strong>Ref:</strong> "+mkey+" normal = <span style='color:var(--green);font-weight:700'>"+ref.min+(ref.max?"&ndash;"+ref.max:"")+"</span> "+ref.unit;
+  } else {
+    const refEl=document.getElementById("pChartRef");
+    if(refEl)refEl.innerHTML="";
+  }
+  const cb=CB();
+  mkChart("cPlayerChart",{type:"bar",data:{labels,datasets},options:{...cb,plugins:{...cb.plugins,tooltip:{...cb.plugins.tooltip,callbacks:{title:ctx=>{const s=SESSION_HIST[ctx[0].dataIndex];return s.date+" - "+(s.type==="match"?"PARTIDO: "+s.label:"Entrenamiento");},label:ctx=>mkey+": "+ctx.raw+(ref?" "+ref.unit:"")}}},scales:{...cb.scales,y:{...cb.scales.y,min:0}}}});
+}
+
+// ====== PLAYER DETAIL PANEL (filter mode) ======
+function renderPlayerDetailPanel(){
+  if(players.length===0)return;
+  const p=players[filterPlayerIdx]||players[0];
+  if(!p)return;
+  const fv=document.getElementById("fView").value;
+  const mult=fv==="acc"?6:1;
+  const vLabel=fv==="acc"?"Acumulado temp.":fv==="avg"?"Media/sesion":"Sesion actual";
+  const acwrC=p.acwr>1.5?"var(--red)":p.acwr>1.3?"var(--amber)":"var(--green)";
+  const wc=p.readiness>=70?"rg":p.readiness>=50?"ra":"rr";
+  const rwl=p.readiness>=70?"Listo":p.readiness>=50?"Precaucion":"Riesgo";
+  const st=statsData.find(s=>s.name===p.name)||{pj:0,mins:0,goles:0,asist:0};
+  function dlt(v,avg){const d=v-avg;const pct=Math.round(Math.abs(d)/Math.max(avg,.01)*100);return d>=0?`<span class="up">+${pct}%</span>`:`<span class="dn">-${pct}%</span>`;}
+  const panel=document.getElementById("playerPanel");
+  if(!panel)return;
+  panel.style.display="block";
+  const hirM2=p.hirM*mult;const spdM2=p.spdM*mult;const dkm=+(p.distKm*mult).toFixed(1);
+  panel.innerHTML=`<div style="background:var(--white);border:1.5px solid var(--bluel);border-radius:var(--rl);padding:16px;box-shadow:var(--sh2)">
+  <div style="display:flex;align-items:center;gap:13px;margin-bottom:13px;padding-bottom:13px;border-bottom:1px solid var(--brd);flex-wrap:wrap">
+    <div style="width:48px;height:48px;border-radius:50%;background:var(--bluel);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--blue);border:2px solid #bfdbfe;flex-shrink:0">${p.init}</div>
+    <div style="flex:1"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="font-size:17px;font-weight:700">${p.name}</span><span class="pos ${PC[p.pos]}">${PL[p.pos]}</span><span style="background:var(--bluel);color:var(--blue);font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px">${vLabel}</span></div>
+    <div style="font-size:10px;color:var(--muted);margin-top:2px">${st.pj} partidos &middot; ${st.mins} min &middot; ${st.goles}G ${st.asist}A</div></div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <div style="text-align:center;padding:9px 13px;border-radius:var(--r);background:${p.fat>=70?"#fef2f2":p.fat>=55?"#fffbeb":"#f0fdf4"};border:2px solid ${p.fatCol}"><div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase">Fatigue</div><div style="font-size:26px;font-weight:700;font-family:var(--m);color:${p.fatCol};line-height:1">${p.fat}</div><div style="font-size:9px;font-weight:600;color:${p.fatCol}">${p.fatStatus}</div></div>
+      <div class="rdns ${wc}"><span>${p.readiness}</span><span style="font-size:8px">${rwl}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div class="km" style="padding:7px"><div class="km-l">ACWR</div><div class="km-v" style="font-size:15px;color:${acwrC}">${p.acwr}</div></div>
+        <div class="km" style="padding:7px"><div class="km-l">Top spd</div><div class="km-v" style="font-size:15px">${p.topSpdKmh}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="blk-lbl"><div class="blk-dot" style="background:var(--blue)"></div>CARGA</div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="km" style="border-left:3px solid var(--${dkm>=9?"green":"amber"})"><div class="km-l">Distancia</div><div class="km-v">${dkm} km</div><div class="km-s">Ref 9-11 km</div><div class="km-r r-${dkm>=9?"ok":"warn"}">${dlt(p.distKm,6.4)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--blue)"><div class="km-l">Session Load</div><div class="km-v">${(p.load*mult).toLocaleString()}</div><div class="km-s">${vLabel}</div><div class="km-r r-ok">${dlt(p.load,2000)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--${hirM2>=600?"green":"amber"})"><div class="km-l">HIR &gt;19.8 km/h</div><div class="km-v">${hirM2} m</div><div class="km-s">Ref 600-900 m</div><div class="km-r r-${hirM2>=600?"ok":"warn"}">${dlt(p.hirM,440)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--${spdM2>=150?"green":"amber"})"><div class="km-l">Sprint &gt;25.2 km/h</div><div class="km-v">${spdM2} m</div><div class="km-s">Ref 150-300 m</div><div class="km-r r-${spdM2>=150?"ok":"warn"}">${dlt(p.spdM,79)} vs media</div></div>
+  </div>
+  <div class="blk-lbl"><div class="blk-dot" style="background:#f97316"></div>INTENSIDAD</div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="km" style="border-left:3px solid var(--${p.topSpdKmh>=25.2?"green":"amber"})"><div class="km-l">Top speed</div><div class="km-v">${p.topSpdKmh} km/h</div><div class="km-s">${p.topSpdKmh>=25.2?"Umbral sprint OK":"Bajo umbral 25.2"}</div></div>
+    <div class="km" style="border-left:3px solid var(--purple)"><div class="km-l">N sprints</div><div class="km-v">${p.sprEvt*mult}</div><div class="km-s">Ref 10-30 partido</div><div class="km-r r-${p.sprEvt>=10?"ok":"warn"}">${dlt(p.sprEvt,7)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--${p.ypmM>=100?"green":"amber"})"><div class="km-l">m/min</div><div class="km-v">${p.ypmM}</div><div class="km-s">Ref 100-120 m/min</div><div class="km-r r-${p.ypmM>=100?"ok":"warn"}">${dlt(p.ypm,109)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--amber)"><div class="km-l">% HIR/dist</div><div class="km-v">${p.hirRatio}%</div><div class="km-s">Ref 8-12%</div><div class="km-r r-${p.hirRatio>=8&&p.hirRatio<=12?"ok":"warn"}">${p.hirRatio>=8&&p.hirRatio<=12?"Normal":"Fuera ref"}</div></div>
+  </div>
+  <div class="blk-lbl"><div class="blk-dot" style="background:var(--purple)"></div>ESTRES MECANICO</div>
+  <div class="g4" style="margin-bottom:12px">
+    <div class="km" style="border-left:3px solid var(--purple)"><div class="km-l">Aceleraciones</div><div class="km-v">${p.acc*mult}</div><div class="km-s">Bowen 2020</div><div class="km-r r-ok">${dlt(p.acc,80)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--${p.dec>100?"red":p.dec>80?"amber":"green"})"><div class="km-l">Deceleraciones</div><div class="km-v" style="color:var(--${p.dec>100?"red":p.dec>80?"amber":"txt"})">${p.dec*mult}</div><div class="km-s">Predictor lesion</div><div class="km-r r-${p.dec>100?"bad":p.dec>80?"warn":"ok"}">${p.dec>100?"Alto - revisar":"OK"}</div></div>
+    <div class="km" style="border-left:3px solid var(--blue)"><div class="km-l">Hi Int. Eventos</div><div class="km-v">${p.hiEvt*mult}</div><div class="km-s">Alta intensidad</div><div class="km-r r-ok">${dlt(p.hiEvt,38)} vs media</div></div>
+    <div class="km" style="border-left:3px solid var(--teal)"><div class="km-l">Acc+Dec/km</div><div class="km-v">${p.adPerKm}</div><div class="km-s">Estres neuromuscular</div></div>
+  </div>
+  <div class="g2">
+    <div class="km" style="border:1px solid var(--brd);border-radius:var(--r);padding:11px">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:7px">ACWR &mdash; ${p.name}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--muted)">Carga aguda 7d:</span><span style="font-family:var(--m);font-weight:700;color:var(--red)">${p.acute7}</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--muted)">Media cronica 28d:</span><span style="font-family:var(--m);font-weight:700;color:var(--green)">${p.hist28avg}</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><span style="font-size:11px;color:var(--muted)">ACWR:</span><span style="font-family:var(--m);font-weight:700;font-size:15px;color:${acwrC}">${p.acwr}</span></div>
+      <div class="zbar"><div style="flex:1;background:#fca5a5;border-radius:3px 0 0 3px"></div><div style="flex:2;background:${p.acwr>=0.8&&p.acwr<=1.3?"#059669":"#bbf7d0"}"></div><div style="flex:1;background:${p.acwr>1.3&&p.acwr<=1.5?"#d97706":"#fde68a"}"></div><div style="flex:1;background:${p.acwr>1.5?"#dc2626":"#fca5a5"};border-radius:0 3px 3px 0"></div></div>
+      <div style="font-size:10px;font-weight:600;color:${acwrC};margin-top:4px">${p.acwr>1.5?"RIESGO x5-7 lesion (Gabbett 2016)":p.acwr>1.3?"Zona alerta":p.acwr<0.8?"Subutilizado":"Zona segura"}</div>
+    </div>
+    <div class="km" style="border:1px solid var(--brd);border-radius:var(--r);padding:11px">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:7px">Wellness</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px"><div class="rdns ${wc}" style="width:48px;height:48px;font-size:14px"><span>${p.readiness}</span><span style="font-size:7px">${rwl}</span></div><div style="font-size:10px;color:var(--muted)">Sueno(30%) + Fatiga(25%) + Muscular(25%) + Estres(20%)</div></div>
+      <div class="wc-grid">${[["Sueno",p.well.sq,false],["Horas",p.well.sh,false,true],["Muscular",p.well.mu,true],["Fatiga",p.well.fa,true],["Estres",p.well.st,true]].map(([l,v,inv,isH])=>{const n=isH?v:v;const cls=inv?(v<=3?"cg":v<=6?"ca":"cr"):(isH?(v>=8?"cg":v>=6?"ca":"cr"):(v>=7?"cg":v>=5?"ca":"cr"));return`<div class="wc"><div class="wv ${cls}">${v}</div><div class="wl">${l}</div></div>`;}).join("")}</div>
+    </div>
+  </div>
+  <div style="margin-top:10px;display:flex;gap:3px;flex-wrap:wrap;align-items:center">
+    ${(partMock[p.init]||[]).map((v,i)=>`<span class="pdot ${v===1?"pd-t":v===2?"pd-m":v===3?"pd-i":"pd-a"}" title="Ses${i+1}: ${v===1?"Entreno":v===2?"Partido":v===3?"Lesion":"Ausente"}"></span>`).join("")}
+    <span style="font-size:10px;color:var(--muted);margin-left:6px">Participacion: <strong>${Math.round((partMock[p.init]||[]).filter(v=>v>0&&v<3).length/(partMock[p.init]||[1]).length*100)}%</strong></span>
+  </div>
+  ${injData.filter(i=>i.player===p.name).length>0?`<div style="margin-top:9px;padding:7px 11px;background:var(--redl);border:1px solid #fca5a5;border-radius:var(--rs);font-size:11px"><strong style="color:var(--red)">Lesiones: </strong>${injData.filter(i=>i.player===p.name).map(i=>i.zone+" ("+i.status+")").join(" | ")}</div>`:""}
+</div>`;
+}
+
+// ====== WELLNESS DATA STORE ======
+// Stores loaded wellness responses from Forms/CSV
+let wellnessLog = [
+  // Demo data — replaced when real CSV loaded
+  {player:"PL",date:"14 abr",type:"morning",sq:8,sh:8.5,mu:2,fa:3,st:2,rpe:null},
+  {player:"PL",date:"16 abr",type:"morning",sq:7,sh:7.5,mu:3,fa:4,st:3,rpe:null},
+  {player:"PL",date:"16 abr",type:"rpe",    sq:null,sh:null,mu:null,fa:null,st:null,rpe:7},
+  {player:"PL",date:"18 abr",type:"morning",sq:7,sh:8,  mu:3,fa:4,st:2,rpe:null},
+  {player:"PL",date:"18 abr",type:"rpe",    sq:null,sh:null,mu:null,fa:null,st:null,rpe:8},
+  {player:"BG",date:"14 abr",type:"morning",sq:5,sh:6.5,mu:6,fa:7,st:5,rpe:null},
+  {player:"BG",date:"16 abr",type:"morning",sq:4,sh:6,  mu:7,fa:8,st:6,rpe:null},
+  {player:"BG",date:"16 abr",type:"rpe",    sq:null,sh:null,mu:null,fa:null,st:null,rpe:6},
+];
+
+// ====== PLAYER FULL VIEW ======
+function renderPlayerView(){
+  if(players.length===0)return;
+  const p=players[activePlayer]||players[0];
+  if(!p)return;
+  // Header
+  document.getElementById("pName").textContent=p.name;
+  document.getElementById("pAvatar").textContent=p.init;
+  document.getElementById("pPos").className="pos "+PC[p.pos];
+  document.getElementById("pPos").textContent=PL[p.pos];
+  const fb=document.getElementById("pFatBadge");
+  fb.textContent=p.fatStatus+" "+p.fat;
+  fb.style.background=p.fat<30?"#f0fdf4":p.fat<55?"#fffbeb":p.fat<70?"#fff7ed":"#fef2f2";
+  fb.style.color=p.fatCol;
+  fb.style.border="1px solid "+p.fatBg;
+  document.getElementById("pSub").textContent=PL[p.pos]+" · Bryant Men's Soccer · Temporada 2025-26 · "+p.pj_desc;
+  renderPlayerFull();
+  renderPlayerChart();
+}
+
+function getFilteredSessions(){
+  const f=document.getElementById("pDateFilter").value;
+  if(f==="all")return SESSION_HIST.map((_,i)=>i);
+  if(f==="s1")return[0];
+  if(f==="s2")return[1];
+  if(f==="s3")return[2];
+  return SESSION_HIST.map((_,i)=>i);
+}
+
+function renderPlayerFull(){
+  if(players.length===0)return;
+  const p=players[activePlayer]||players[0];
+  if(!p)return;
+  const idxs=getFilteredSessions();
+  const vt=document.getElementById("pViewType").value;
+  const pData=SH_DATA[p.init]||[];
+  const sessions=idxs.map(i=>({...SESSION_HIST[i],idx:i,vals:pData[i]||[0,0,0,0,0,0,0,0,0]}));
+  const labels=sessions.map(s=>s.date+" "+(s.type==="match"?"(P)":"(E)"));
+  const bgC=s=>s.type==="match"?"#2563eb":"#bfdbfe";
+  const bdC=s=>s.type==="match"?"#1d4ed8":"#2563eb";
+
+  // Aggregate by view type
+  function agg(col){
+    const vals=sessions.map(s=>s.vals[col]||0);
+    if(vt==="acc")return[vals.reduce((a,b)=>a+b,0)];
+    if(vt==="avg")return[+(vals.reduce((a,b)=>a+b,0)/Math.max(vals.filter(v=>v>0).length,1)).toFixed(1)];
+    return vals;
+  }
+  const aggLabels=vt==="acc"?["Acumulado"]:vt==="avg"?["Media"]:labels;
+  const aggColors=vt!=="cur"?["#2563eb"]:sessions.map(s=>bgC(s));
+  const aggBorders=vt!=="cur"?["#1d4ed8"]:sessions.map(s=>bdC(s));
+
+  // Get last session data for KPIs
+  const lastIdx=idxs[idxs.length-1];
+  const lastVals=pData[lastIdx]||p;
+  const d_dist=lastVals[0]||p.distKm;
+  const d_load=lastVals[1]||p.load;
+  const d_hir= lastVals[2]||p.hirM;
+  const d_spd= lastVals[3]||p.spdM;
+  const d_acc= lastVals[4]||p.acc;
+  const d_dec= lastVals[5]||p.dec;
+  const d_top= lastVals[6]||p.topSpdKmh;
+  const d_spr= lastVals[7]||p.sprEvt;
+  const d_mpm= lastVals[8]||p.ypmM;
+  const d_hir_r=p.dist>0?+(d_hir/(d_dist*1000/1.60934*1760)*100).toFixed(1):p.hirRatio;
+
+  // KPI row (top 4 most important)
+  const acwrC=p.acwr>1.5?"var(--red)":p.acwr>1.3?"var(--amber)":"var(--green)";
+  document.getElementById("pKpiRow").innerHTML=[
+    {l:"Fatigue Score",v:p.fat,s:p.fatStatus,cl:p.fatCol,bl:p.fatBg},
+    {l:"ACWR",v:p.acwr,s:p.acwr>1.5?"RIESGO":p.acwr>1.3?"Alerta":"Seguro",cl:p.acwr>1.5?"var(--red)":p.acwr>1.3?"var(--amber)":"var(--green)",bl:p.acwr>1.5?"#fef2f2":p.acwr>1.3?"#fffbeb":"#f0fdf4"},
+    {l:"Session Load",v:d_load.toLocaleString(),s:"Carga interna",cl:"var(--blue)",bl:"var(--bluel)"},
+    {l:"Readiness",v:p.readiness,s:p.readiness>=70?"Listo":p.readiness>=50?"Precaucion":"Riesgo",cl:p.readiness>=70?"var(--green)":p.readiness>=50?"var(--amber)":"var(--red)",bl:p.readiness>=70?"#f0fdf4":p.readiness>=50?"#fffbeb":"#fef2f2"},
+  ].map(k=>`<div class="km" style="border-left:3px solid ${k.cl};background:${k.bl}"><div class="km-l">${k.l}</div><div class="km-v" style="color:${k.cl}">${k.v}</div><div class="km-s">${k.s}</div></div>`).join("");
+
+  // Load KPIs
+  document.getElementById("pLoadKpis").innerHTML=[
+    {l:"Distancia",v:d_dist+" km",s:"Ref 9-11 km",ok:d_dist>=9},
+    {l:"Session Load",v:d_load.toLocaleString(),s:"Carga interna total",ok:true},
+    {l:"HIR >19.8 km/h",v:d_hir+" m",s:"Ref 600-900 m",ok:d_hir>=600},
+    {l:"Sprint >25.2",v:d_spd+" m",s:"Ref 150-300 m",ok:d_spd>=150},
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${k.ok?"green":"amber"})"><div class="km-l">${k.l}</div><div class="km-v">${k.v}</div><div class="km-s">${k.s}</div><div class="km-r r-${k.ok?"ok":"warn"}">${k.ok?"Normal":"Bajo referencia"}</div></div>`).join("");
+
+  // Intensidad KPIs
+  document.getElementById("pIntKpis").innerHTML=[
+    {l:"Top speed",v:d_top+" km/h",s:d_top>=25.2?"Umbral sprint OK":"Bajo umbral 25.2",ok:d_top>=25.2},
+    {l:"N sprints",v:d_spr,s:"Ref 10-30",ok:d_spr>=10},
+    {l:"m/min",v:d_mpm,s:"Ref 100-120",ok:d_mpm>=100},
+    {l:"% HIR/dist",v:d_hir_r+"%",s:"Ref 8-12%",ok:d_hir_r>=8&&d_hir_r<=12},
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${k.ok?"green":"amber"})"><div class="km-l">${k.l}</div><div class="km-v">${k.v}</div><div class="km-s">${k.s}</div><div class="km-r r-${k.ok?"ok":"warn"}">${k.ok?"Normal":"Revisar"}</div></div>`).join("");
+
+  // Mecanico KPIs
+  const adkm=+((d_acc+d_dec)/Math.max(d_dist,0.1)).toFixed(1);
+  document.getElementById("pMechKpis").innerHTML=[
+    {l:"Aceleraciones",v:d_acc,s:"Bowen 2020",ok:true},
+    {l:"Deceleraciones",v:d_dec,s:"Predictor lesion muscular",ok:d_dec<=100,warn:d_dec>80},
+    {l:"Hi Int. Eventos",v:lastVals[5]||p.hiEvt,s:"Alta intensidad",ok:true},
+    {l:"Acc+Dec/km",v:adkm,s:"Estres neuromuscular relativo",ok:true},
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${!k.ok?"red":k.warn?"amber":"purple"})"><div class="km-l">${k.l}</div><div class="km-v" style="color:var(--${!k.ok?"red":k.warn?"amber":"txt"})">${k.v}</div><div class="km-s">${k.s}</div><div class="km-r r-${!k.ok?"bad":k.warn?"warn":"ok"}">${!k.ok?"Alto - revisar":k.warn?"Monitorizar":"OK"}</div></div>`).join("");
+
+  // ACWR row
+  document.getElementById("pACWRrow").innerHTML=[
+    `<div style="text-align:center;padding:5px;background:var(--surf);border-radius:var(--rs)"><div style="font-weight:700;font-family:var(--m);color:var(--red);font-size:13px">${p.acute7}</div><div style="color:var(--muted);font-size:9px">Aguda 7d</div></div>`,
+    `<div style="text-align:center;padding:5px;background:var(--surf);border-radius:var(--rs)"><div style="font-weight:700;font-family:var(--m);color:var(--green);font-size:13px">${p.hist28avg}</div><div style="color:var(--muted);font-size:9px">Cronica 28d</div></div>`,
+    `<div style="text-align:center;padding:5px;background:${p.acwr>1.5?"#fef2f2":p.acwr>1.3?"#fffbeb":"#f0fdf4"};border-radius:var(--rs)"><div style="font-weight:700;font-family:var(--m);font-size:13px;color:${acwrC}">${p.acwr}</div><div style="color:var(--muted);font-size:9px">ACWR</div></div>`,
+  ].join("");
+
+  // Wellness KPIs (last morning entry for this player)
+  const pWell=wellnessLog.filter(w=>w.player===p.init&&w.type==="morning");
+  const lastW=pWell.length>0?pWell[pWell.length-1]:p.well;
+  const pRPE=wellnessLog.filter(w=>w.player===p.init&&w.type==="rpe");
+  const lastRPE=pRPE.length>0?pRPE[pRPE.length-1]:{rpe:null};
+  document.getElementById("pWellKpis").innerHTML=[
+    {l:"Sueno calidad",v:(lastW.sq||p.well.sq)+"/10",s:"Ultima entrada",ok:(lastW.sq||p.well.sq)>=7},
+    {l:"Horas sueno",v:(lastW.sh||p.well.sh)+"h",s:"Rec: 8h+ atletas",ok:(lastW.sh||p.well.sh)>=8},
+    {l:"Fatiga mat.",v:(lastW.fa||p.well.fa)+"/10",s:"1=descansado 10=agotado",ok:(lastW.fa||p.well.fa)<=4},
+    {l:"RPE post",v:lastRPE.rpe!=null?lastRPE.rpe+"/10":"—",s:"Foster: RPE x min",ok:lastRPE.rpe==null||lastRPE.rpe<=7},
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${k.ok?"green":"amber"})"><div class="km-l">${k.l}</div><div class="km-v">${k.v}</div><div class="km-s">${k.s}</div></div>`).join("");
+
+  // Charts
+  const cb=CB();
+  const cb0={...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0}}};
+
+  // Dist
+  mkChart("cPDist",{type:"bar",data:{labels:aggLabels,datasets:[{data:agg(0),backgroundColor:aggColors,borderColor:aggBorders,borderWidth:2,borderRadius:5},{type:"line",data:aggLabels.map(()=>9),borderColor:"#059669",borderWidth:1.5,borderDash:[5,3],pointRadius:0}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,max:13}}}});
+  // Load
+  mkChart("cPLoad",{type:"bar",data:{labels:aggLabels,datasets:[{data:agg(1),backgroundColor:aggColors,borderColor:aggBorders,borderWidth:2,borderRadius:5}]},options:cb0});
+  // HIR
+  mkChart("cPHIR",{type:"bar",data:{labels:aggLabels,datasets:[{label:"HIR",data:agg(2),backgroundColor:aggColors,borderColor:aggBorders,borderWidth:2,borderRadius:5},{label:"Sprint",data:agg(3),backgroundColor:aggColors.map(c=>c==="#2563eb"?"#60a5fa":"#bfdbfe"),borderRadius:5},{type:"line",data:aggLabels.map(()=>600),borderColor:"#d97706",borderWidth:1.5,borderDash:[4,3],pointRadius:0}]},options:cb0});
+  // ACWR 7d bars
+  mkChart("cPLoad7",{type:"bar",data:{labels:["L-7","L-6","L-5","L-4","L-3","L-2","Hoy"],datasets:[{data:p.hist7,backgroundColor:p.hist7.map(v=>v===0?"#e5e7eb":"#bfdbfe"),borderColor:p.hist7.map(v=>v===0?"#e5e7eb":"#2563eb"),borderWidth:1.5,borderRadius:3}]},options:{...cb0,plugins:{...cb0.plugins,tooltip:{...cb0.plugins.tooltip,callbacks:{label:ctx=>"Load: "+(ctx.raw||"Descanso")}}}}});
+  // Speed
+  mkChart("cPSpeed",{type:"bar",data:{labels:aggLabels,datasets:[{data:agg(6),backgroundColor:aggColors,borderColor:aggBorders,borderWidth:2,borderRadius:5},{type:"line",data:aggLabels.map(()=>25.2),borderColor:"#f97316",borderWidth:1.5,borderDash:[5,3],pointRadius:0}]},options:{...cb,scales:{...cb.scales,y:{...cb.scales.y,min:20,max:38}}}});
+  // Sprints + mpm dual axis
+  mkChart("cPSprints",{type:"bar",data:{labels:aggLabels,datasets:[{label:"Sprints",data:agg(7),backgroundColor:"#ddd6fe",borderColor:"#7c3aed",borderWidth:1.5,borderRadius:5,yAxisID:"y"},{label:"m/min",type:"line",data:agg(8),borderColor:"#7c3aed",borderWidth:2,pointRadius:4,yAxisID:"y1"}]},options:{...cb,scales:{x:cb.scales.x,y:{...cb.scales.y,min:0,position:"left"},y1:{min:60,max:150,position:"right",grid:{display:false},ticks:{color:"#7c3aed",font:{size:10}},border:{display:false}}}}});
+  // Acc + Dec
+  mkChart("cPAcc",{type:"bar",data:{labels:aggLabels,datasets:[{label:"Acc",data:agg(4),backgroundColor:"#ddd6fe",borderColor:"#7c3aed",borderWidth:1.5,borderRadius:5},{label:"Dec",data:agg(5),backgroundColor:"#a78bfa",borderColor:"#7c3aed",borderWidth:1,borderRadius:5}]},options:cb0});
+
+  // Wellness history chart
+  const wellDates=pWell.map(w=>w.date).slice(-6);
+  mkChart("cPWellHist",{type:"line",data:{labels:wellDates.length>0?wellDates:["14 abr","16 abr","18 abr"],datasets:[
+    {label:"Sueno",data:pWell.slice(-6).map(w=>w.sq)||[8,7,7],borderColor:"#2563eb",backgroundColor:"rgba(37,99,235,.08)",tension:.3,pointRadius:4,borderWidth:2,fill:true},
+    {label:"Fatiga",data:pWell.slice(-6).map(w=>w.fa)||[3,4,4],borderColor:"#d97706",tension:.3,pointRadius:4,borderWidth:2},
+    {label:"Muscular",data:pWell.slice(-6).map(w=>w.mu)||[2,3,3],borderColor:"#7c3aed",tension:.3,pointRadius:4,borderWidth:2},
+    {label:"Estres",data:pWell.slice(-6).map(w=>w.st)||[2,3,2],borderColor:"#dc2626",tension:.3,pointRadius:4,borderWidth:2},
+  ]},options:{...cb0,plugins:{...cb0.plugins,legend:{display:true,labels:{color:"#6b7a92",font:{size:10},boxWidth:10}}},scales:{...cb0.scales,y:{...cb0.scales.y,max:10}}}});
+
+  // RPE history
+  const rpeDates=pRPE.map(w=>w.date).slice(-6);
+  mkChart("cPRPEHist",{type:"bar",data:{labels:rpeDates.length>0?rpeDates:["16 abr","18 abr"],datasets:[{data:pRPE.slice(-6).map(w=>w.rpe)||[7,8],backgroundColor:pRPE.slice(-6).map(w=>{
+    const s=SESSION_HIST.find(sh=>sh.date===w.date);
+    return s&&s.type==="match"?"#2563eb":"#bfdbfe";
+  })||["#bfdbfe","#2563eb"],borderRadius:5,borderWidth:1.5},{type:"line",data:(rpeDates.length>0?rpeDates:[" "," "]).map(()=>7),borderColor:"#d97706",borderWidth:1.5,borderDash:[4,3],pointRadius:0}]},options:{...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0,max:11}}}});
+
+  // Wellness table
+  const allW=wellnessLog.filter(w=>w.player===p.init);
+  const wByDate={};
+  allW.forEach(w=>{
+    if(!wByDate[w.date])wByDate[w.date]={date:w.date};
+    if(w.type==="morning")Object.assign(wByDate[w.date],{sq:w.sq,sh:w.sh,mu:w.mu,fa:w.fa,st:w.st});
+    if(w.type==="rpe")wByDate[w.date].rpe=w.rpe;
+  });
+  // Fill with session history dates if no wellness data
+  SESSION_HIST.forEach(s=>{if(!wByDate[s.date])wByDate[s.date]={date:s.date};wByDate[s.date].sessionType=s.type;wByDate[s.date].label=s.label;});
+  const wRows=Object.values(wByDate).sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById("pWellTable").innerHTML=wRows.map(w=>{
+    const rd=w.sq!=null?Math.max(40,Math.min(100,Math.round(((w.sq/10)*.30+(1-(w.fa||5)/10)*.25+(1-(w.mu||5)/10)*.25+(1-(w.st||5)/10)*.20)*100))):null;
+    const rpeLoad=w.rpe!=null?w.rpe*90:"—";
+    return`<tr>
+      <td style="font-weight:600">${w.date}</td>
+      <td><span class="stag ${w.sessionType==="match"?"stag-m":"stag-t"}">${w.sessionType==="match"?"Partido":"Entreno"}</span></td>
+      <td class="mn" style="color:${w.sq!=null?(w.sq>=7?"var(--green)":w.sq>=5?"var(--amber)":"var(--red)"):"var(--hint)"}">${w.sq!=null?w.sq+"/10":"—"}</td>
+      <td class="mn">${w.sh!=null?w.sh+"h":"—"}</td>
+      <td class="mn" style="color:${w.mu!=null?(w.mu<=3?"var(--green)":w.mu<=6?"var(--amber)":"var(--red)"):"var(--hint)"}">${w.mu!=null?w.mu+"/10":"—"}</td>
+      <td class="mn" style="color:${w.fa!=null?(w.fa<=3?"var(--green)":w.fa<=6?"var(--amber)":"var(--red)"):"var(--hint)"}">${w.fa!=null?w.fa+"/10":"—"}</td>
+      <td class="mn" style="color:${w.st!=null?(w.st<=3?"var(--green)":w.st<=6?"var(--amber)":"var(--red)"):"var(--hint)"}">${w.st!=null?w.st+"/10":"—"}</td>
+      <td><span style="font-family:var(--m);font-weight:700;color:${rd!=null?(rd>=70?"var(--green)":rd>=50?"var(--amber)":"var(--red)"):"var(--hint)"}">${rd!=null?rd:"—"}</span></td>
+      <td class="mn" style="color:${w.rpe!=null?(w.rpe<=5?"var(--green)":w.rpe<=7?"var(--amber)":"var(--red)"):"var(--hint)"}">${w.rpe!=null?w.rpe+"/10":"—"}</td>
+      <td class="mn">${typeof rpeLoad==="number"?rpeLoad.toLocaleString():"—"}</td>
+    </tr>`;
+  }).join("");
+
+  // Player stats
+  const st=statsData.find(s=>s.name===p.name)||{pj:0,mins:0,goles:0,asist:0};
+  document.getElementById("pStatsContent").innerHTML=`
+    <div class="g4" style="margin-bottom:9px">
+      <div class="km" style="padding:8px;border-left:3px solid var(--blue)"><div class="km-l">Partidos</div><div class="km-v" style="font-size:18px">${st.pj}</div></div>
+      <div class="km" style="padding:8px;border-left:3px solid var(--teal)"><div class="km-l">Minutos</div><div class="km-v" style="font-size:18px">${st.mins}</div></div>
+      <div class="km" style="padding:8px;border-left:3px solid var(--green)"><div class="km-l">Goles</div><div class="km-v" style="font-size:18px">${st.goles}</div><div class="km-s">G/90: ${st.mins>0?(st.goles/st.mins*90).toFixed(2):0}</div></div>
+      <div class="km" style="padding:8px;border-left:3px solid var(--amber)"><div class="km-l">Asistencias</div><div class="km-v" style="font-size:18px">${st.asist}</div><div class="km-s">A/90: ${st.mins>0?(st.asist/st.mins*90).toFixed(2):0}</div></div>
+    </div>`;
+
+  // Participation + injuries
+  const pts=partMock[p.init]||[];
+  const pct=Math.round(pts.filter(v=>v>0&&v<3).length/pts.length*100);
+  const pinj=injData.filter(i=>i.player===p.name);
+  document.getElementById("pPartContent").innerHTML=
+    `<div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+      ${pts.map((v,i)=>`<span class="pdot ${v===1?"pd-t":v===2?"pd-m":v===3?"pd-i":"pd-a"}" title="Ses${i+1}: ${v===1?"Entreno":v===2?"Partido":v===3?"Lesion":"Ausente"}"></span>`).join("")}
+      <span style="font-size:10px;color:var(--muted);margin-left:6px">Participacion: <strong style="color:${pct>=80?"var(--green)":pct>=60?"var(--amber)":"var(--red)"}">${pct}%</strong></span>
+    </div>`+
+    (pinj.length>0?pinj.map(inj=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--brd)"><div class="inj-dot ${inj.status==="Resuelta"?"dot-g":inj.status.includes("recup")?"dot-a":"dot-r"}"></div><div style="flex:1"><div style="font-weight:600;font-size:12px">${inj.zone}</div><div style="font-size:10px;color:var(--muted)">${inj.type} &middot; ${inj.start} &middot; ${inj.days}d &middot; <span style="font-weight:600;color:${inj.status==="Resuelta"?"var(--green)":"var(--amber)"}">${inj.status}</span></div></div></div>`).join("")
+    :"<div style='font-size:11px;color:var(--hint);padding:8px 0'>Sin lesiones registradas &#9989;</div>");
+}
+
+// ====== GOOGLE FORMS — CONEXION DIRECTA + CSV ======
+let lastSyncTime=null;
+let autoSyncTimer=null;
+let autoSyncEnabled=false;
+let syncCountdownTimer=null;
+
+function loadSavedForms(){
+  try{
+    const wu=localStorage.getItem("bsoc_wellUrl")||"";
+    const ru=localStorage.getItem("bsoc_rpeUrl")||"";
+    const iv=localStorage.getItem("bsoc_interval")||"120";
+    const ae=localStorage.getItem("bsoc_autoSync")==="1";
+    const e1=document.getElementById("wellUrlInput");if(e1)e1.value=wu;
+    const e2=document.getElementById("rpeUrlInput");if(e2)e2.value=ru;
+    const e3=document.getElementById("syncInterval");if(e3)e3.value=iv;
+    if(ae&&(wu||ru))enableAutoSync();
+  }catch(e){}
+  updateModalStatus();
+}
+
+function saveForms(){
+  try{
+    const wu=(document.getElementById("wellUrlInput")||{value:""}).value.trim();
+    const ru=(document.getElementById("rpeUrlInput")||{value:""}).value.trim();
+    const iv=(document.getElementById("syncInterval")||{value:"120"}).value;
+    localStorage.setItem("bsoc_wellUrl",wu);
+    localStorage.setItem("bsoc_rpeUrl",ru);
+    localStorage.setItem("bsoc_interval",iv);
+  }catch(e){}
+}
+
+function connectUrl(type){
+  let url=(document.getElementById(type==="well"?"wellUrlInput":"rpeUrlInput")||{value:""}).value.trim();
+  const res=document.getElementById(type==="well"?"wellResult":"rpeResult");
+  const st=document.getElementById(type==="well"?"wellStatus":"rpeStatus");
+  if(!url){if(res)res.innerHTML='<span style="color:var(--red)">Pega la URL primero</span>';return;}
+
+  // Auto-convert any Google Sheets URL to CSV export format
+  url=toCSVUrl(url);
+  // Update the input with the corrected URL
+  const inp=document.getElementById(type==="well"?"wellUrlInput":"rpeUrlInput");
+  if(inp)inp.value=url;
+
+  if(res)res.innerHTML='<span style="color:var(--amber)">Conectando...</span>';
+  saveForms();
+
+  fetch(url)
+    .then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.text();})
+    .then(csv=>{
+      if(csv.trim().startsWith("<!DOCTYPE")||csv.trim().startsWith("<html")){
+        throw new Error("La Sheet no es publica o la URL no es CSV");
+      }
+      const count=parseCSVIntoLog(csv,type);
+      lastSyncTime=new Date();
+      if(res)res.innerHTML='<span style="color:var(--green);font-weight:600">&#9989; Conectado &mdash; '+count+' respuestas cargadas</span>';
+      if(st)st.innerHTML='<span style="color:var(--green);font-weight:600">&#9989; '+count+' respuestas</span>';
+      updateModalStatus();afterSync();
+    })
+    .catch(err=>{
+      if(res)res.innerHTML='<span style="color:var(--red)">&#10060; '+err.message+'<br><span style="font-weight:normal">Asegurate de: 1) Archivo &rarr; Publicar en la web &rarr; seleccionar hoja &rarr; CSV &rarr; Publicar</span></span>';
+      if(st)st.innerHTML='<span style="color:var(--red)">Error</span>';
+    });
+}
+
+// Convierte cualquier URL de Google Sheets a formato CSV descargable
+function toCSVUrl(url){
+  // Ya es una URL CSV publica correcta
+  if(url.includes("output=csv")&&url.includes("/pub"))return url;
+
+  // URL de edicion: https://docs.google.com/spreadsheets/d/ID/edit...
+  const idMatch=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(!idMatch)return url;
+  const id=idMatch[1];
+
+  // Extraer gid si existe
+  const gidMatch=url.match(/[?&#]gid=(\d+)/);
+  const gid=gidMatch?gidMatch[1]:"0";
+
+  // Construir URL de exportacion directa (no necesita publicar en web)
+  return "https://docs.google.com/spreadsheets/d/"+id+"/export?format=csv&gid="+gid;
+}
+
+function syncNow(){
+  const wu=toCSVUrl((document.getElementById("wellUrlInput")||{value:""}).value.trim());
+  const ru=toCSVUrl((document.getElementById("rpeUrlInput")||{value:""}).value.trim());
+  if(!wu&&!ru)return;
+  const promises=[];
+  if(wu)promises.push(fetch(wu).then(r=>r.text()).then(csv=>{
+    if(!csv.trim().startsWith("<"))return parseCSVIntoLog(csv,"well");return 0;
+  }).catch(()=>0));
+  if(ru)promises.push(fetch(ru).then(r=>r.text()).then(csv=>{
+    if(!csv.trim().startsWith("<"))return parseCSVIntoLog(csv,"rpe");return 0;
+  }).catch(()=>0));
+  Promise.all(promises).then(()=>{
+    lastSyncTime=new Date();
+    updateModalStatus();afterSync();
+  });
+}
+
+function toggleAutoSync(){
+  if(autoSyncEnabled)disableAutoSync();else enableAutoSync();
+}
+function enableAutoSync(){
+  autoSyncEnabled=true;
+  try{localStorage.setItem("bsoc_autoSync","1");}catch(e){}
+  const bg=document.getElementById("toggleBg");
+  const dot=document.getElementById("toggleDot");
+  const lbl=document.getElementById("toggleLbl");
+  if(bg)bg.style.background="var(--green)";
+  if(dot)dot.style.left="20px";
+  if(lbl){lbl.textContent="Activo";lbl.style.color="var(--green)";}
+  restartAutoSync();
+}
+function disableAutoSync(){
+  autoSyncEnabled=false;
+  try{localStorage.setItem("bsoc_autoSync","0");}catch(e){}
+  if(autoSyncTimer)clearInterval(autoSyncTimer);
+  if(syncCountdownTimer)clearInterval(syncCountdownTimer);
+  autoSyncTimer=null;syncCountdownTimer=null;
+  const bg=document.getElementById("toggleBg");
+  const dot=document.getElementById("toggleDot");
+  const lbl=document.getElementById("toggleLbl");
+  if(bg)bg.style.background="var(--brd2)";
+  if(dot)dot.style.left="2px";
+  if(lbl){lbl.textContent="Desactivado";lbl.style.color="var(--muted)";}
+  const cd=document.getElementById("syncCountdown");
+  if(cd)cd.textContent="";
+}
+function restartAutoSync(){
+  if(autoSyncTimer)clearInterval(autoSyncTimer);
+  if(syncCountdownTimer)clearInterval(syncCountdownTimer);
+  if(!autoSyncEnabled)return;
+  const secs=parseInt((document.getElementById("syncInterval")||{value:"120"}).value)||120;
+  let cd=secs;
+  const cdEl=document.getElementById("syncCountdown");
+  syncCountdownTimer=setInterval(()=>{
+    cd--;
+    if(cdEl)cdEl.textContent="Proxima sincronizacion en "+cd+"s";
+    if(cd<=0)cd=secs;
+  },1000);
+  autoSyncTimer=setInterval(()=>{syncNow();cd=secs;},secs*1000);
+}
+
+function afterSync(){
+  updateWellnessConnStatus();
+  if(document.getElementById("s-player").classList.contains("active"))renderPlayerFull();
+  renderWellness();renderTeam();
+}
+
+function updateModalStatus(){
+  const wellCount=wellnessLog.filter(w=>w.type==="well").length;
+  const rpeCount=wellnessLog.filter(w=>w.type==="rpe").length;
+  const total=wellCount+rpeCount;
+  const badge=document.getElementById("syncBadge");
+  if(badge){
+    if(total>0){badge.style.background="var(--greenl)";badge.style.color="var(--green)";badge.textContent=total+" respuestas";}
+    else{badge.style.background="var(--surf)";badge.style.color="var(--hint)";badge.textContent="Sin datos";}
+  }
+  const wellSt=document.getElementById("wellStatus");
+  const rpeSt=document.getElementById("rpeStatus");
+  if(wellSt&&wellCount>0)wellSt.innerHTML='<span style="color:var(--green);font-weight:600">&#9989; '+wellCount+' respuestas</span>';
+  if(rpeSt&&rpeCount>0)rpeSt.innerHTML='<span style="color:var(--green);font-weight:600">&#9989; '+rpeCount+' respuestas</span>';
+  const sum=document.getElementById("loadedSummary");
+  if(sum){
+    if(total>0){
+      sum.style.display="block";
+      sum.innerHTML="&#9989; <strong>"+total+" respuestas en el dashboard</strong> &mdash; Wellness: "+wellCount+" &middot; RPE: "+rpeCount+(lastSyncTime?" &middot; Ultima sinc: "+lastSyncTime.toLocaleTimeString():"");
+    }else sum.style.display="none";
+  }
+  const dot=document.getElementById("sidebarSyncDot");
+  if(dot)dot.style.background=total>0?"var(--green)":"var(--brd2)";
+}
+
+function loadWellnessCSV(input,type){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const count=parseCSVIntoLog(e.target.result,type||"well");
+    lastSyncTime=new Date();
+    updateModalStatus();afterSync();
+    const res=document.getElementById(type==="rpe"?"rpeResult":"wellResult");
+    if(res)res.innerHTML='<span style="color:var(--green);font-weight:600">&#9989; '+count+' respuestas cargadas desde CSV</span>';
+  };
+  reader.readAsText(file);
+}
+
+// Stubs para referencias antiguas
+function openSheet(){}
+function saveForms2(){}
+
+function parseCSVIntoLog(csv,type){
+  // Handle Google Sheets CSV which uses \r\n and may have quoted fields
+  const lines=csv.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+  if(lines.length<2)return 0;
+  // Smart CSV parser (handles quoted commas)
+  function parseRow(line){
+    const res=[];let cur="";let inQ=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"')inQ=!inQ;
+      else if(c===","&&!inQ){res.push(cur.trim());cur="";}
+      else cur+=c;
+    }
+    res.push(cur.trim());
+    return res;
+  }
+  const hdrs=parseRow(lines[0]).map(h=>h.toLowerCase().replace(/['"]/g,""));
+  const fi=names=>{for(const n of names){const i=hdrs.findIndex(h=>h.includes(n));if(i>=0)return i;}return -1;};
+  const iP=fi(["jugador","player","nombre","name"]);
+  const iD=fi(["marca temporal","timestamp","fecha","date","sesion"]);
+  const iSQ=fi(["calidad","sleep_q","sueno calidad","sleep quality"]);
+  const iSH=fi(["horas","sleep_h","hours of sleep","horas de sueno"]);
+  const iMU=fi(["muscular","muscle","dolor muscular"]);
+  const iFA=fi(["fatiga","fatigue","nivel de fatiga"]);
+  const iST=fi(["estres","stress","nivel de estres"]);
+  const iRPE=fi(["rpe","perceived","esfuerzo","effort","rate"]);
+  let count=0;
+  for(let i=1;i<lines.length;i++){
+    const v=parseRow(lines[i]).map(x=>x.replace(/^"|"$/g,"").trim());
+    if(!v[0])continue;
+    const pName=iP>=0?v[iP]:"";
+    const p=players.find(x=>
+      x.name.toLowerCase()===pName.toLowerCase()||
+      x.name.toLowerCase().includes(pName.toLowerCase())||
+      x.init===pName.toUpperCase()||
+      x.name.split(" ")[0].toLowerCase()===pName.toLowerCase()
+    );
+    if(!p)continue;
+    // Parse timestamp from Google Forms (format: DD/MM/YYYY HH:MM:SS or similar)
+    const dateRaw=iD>=0?v[iD]:"";
+    let dateStr="";
+    if(dateRaw){
+      const d=new Date(dateRaw);
+      if(!isNaN(d)){
+        const months=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+        dateStr=d.getDate()+" "+months[d.getMonth()];
+      } else {
+        // Try DD/MM/YYYY
+        const m=dateRaw.match(/(\d{1,2})[\/\-](\d{1,2})/);
+        if(m){const months=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];dateStr=m[1]+" "+(months[parseInt(m[2])-1]||m[2]);}
+        else dateStr=dateRaw.slice(0,8);
+      }
+    } else dateStr="Fila "+(i);
+    const entry={player:p.init,date:dateStr,type};
+    if(type==="rpe"){
+      entry.rpe=iRPE>=0&&v[iRPE]?parseFloat(v[iRPE])||null:null;
+      entry.sq=null;entry.sh=null;entry.mu=null;entry.fa=null;entry.st=null;
+      if(entry.rpe!=null)p.well.rpe=entry.rpe;
+    } else {
+      entry.sq=iSQ>=0&&v[iSQ]?parseFloat(v[iSQ])||null:null;
+      entry.sh=iSH>=0&&v[iSH]?parseFloat(v[iSH])||null:null;
+      entry.mu=iMU>=0&&v[iMU]?parseFloat(v[iMU])||null:null;
+      entry.fa=iFA>=0&&v[iFA]?parseFloat(v[iFA])||null:null;
+      entry.st=iST>=0&&v[iST]?parseFloat(v[iST])||null:null;
+      entry.rpe=null;
+      if(entry.sq!=null)p.well.sq=entry.sq;
+      if(entry.sh!=null)p.well.sh=entry.sh;
+      if(entry.mu!=null)p.well.mu=entry.mu;
+      if(entry.fa!=null)p.well.fa=entry.fa;
+      if(entry.st!=null)p.well.st=entry.st;
+      p.readiness=Math.max(40,Math.min(100,Math.round(((p.well.sq/10)*.30+(1-p.well.fa/10)*.25+(1-p.well.mu/10)*.25+(1-p.well.st/10)*.20)*100)));
+    }
+    const dupIdx=wellnessLog.findIndex(w=>w.player===p.init&&w.date===dateStr&&w.type===type);
+    if(dupIdx>=0)wellnessLog[dupIdx]=entry;else wellnessLog.push(entry);
+    count++;
+  }
+  players.forEach(px=>{
+    px.fat=fatigue(px);
+    px.fatStatus=px.fat<30?"Fresh":px.fat<55?"Normal":px.fat<70?"Fatigado":px.fat<85?"High Risk":"Injury Risk";
+    px.fatCol=px.fat<30?"#059669":px.fat<55?"#d97706":px.fat<70?"#f97316":px.fat<85?"#dc2626":"#991b1b";
+    px.fatBg=px.fat<30?"#bbf7d0":px.fat<55?"#fde68a":px.fat<70?"#fed7aa":"#fca5a5";
+  });
+  return count;
+}
+
+function updateWellnessConnStatus(){
+  const wellCount=wellnessLog.filter(w=>w.type==="well").length;
+  const rpeCount=wellnessLog.filter(w=>w.type==="rpe").length;
+  const wEl=document.getElementById("pWellConnStatus");
+  const rEl=document.getElementById("pRPEConnStatus");
+  if(wEl)wEl.innerHTML=wellCount>0?`<span style="color:var(--green);font-weight:600">&#9989; ${wellCount} entradas wellness</span>`:`<span style="color:var(--hint)">Sin datos &mdash; conecta en "Google Forms"</span>`;
+  if(rEl)rEl.innerHTML=rpeCount>0?`<span style="color:var(--blue);font-weight:600">&#9989; ${rpeCount} entradas RPE</span>`:`<span style="color:var(--hint)">Sin datos &mdash; conecta en "Google Forms"</span>`;
+  updateModalStatus();
+}
+
+function openM(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add("open");
+  if(id==="mForms")loadSavedForms();
+}
+
+// ====== PLAYER SECTION ======
+function renderPlayerView(){
+  const p=players[activePlayer];
+  if(!p)return;
+  p.pj_desc=(statsData.find(s=>s.name===p.name)||{pj:0}).pj+" partidos temporada";
+  document.getElementById("pName").textContent=p.name;
+  document.getElementById("pAvatar").textContent=p.init;
+  document.getElementById("pPos").className="pos "+PC[p.pos];
+  document.getElementById("pPos").textContent=PL[p.pos];
+  const fb=document.getElementById("pFatBadge");
+  fb.textContent=p.fatStatus+" "+p.fat;
+  fb.style.cssText="font-size:12px;font-weight:700;font-family:var(--m);padding:3px 10px;border-radius:6px;background:"+p.fatBg+";color:"+p.fatCol+";border:1px solid "+p.fatBg;
+  document.getElementById("pSub").textContent=PL[p.pos]+" \u00b7 Bryant Men's Soccer \u00b7 Temporada 2025-26";
+  updateWellnessConnStatus("well");
+  renderPlayerFull();
+  renderPlayerChart();
+}
+function renderPlayerDetailInContent(){}
+
+// ====== WELLNESS ======
+function renderWellness(){
+  if(players.length===0)return;
+  const cb=CB(),cb0={...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0}}};
+  document.getElementById("wellKpis").innerHTML=[
+    {l:"Sueno medio",  v:(players.reduce((a,p)=>a+p.well.sq,0)/players.length).toFixed(1),s:"Escala 1-10",c:"ok"},
+    {l:"Horas sueno",  v:(players.reduce((a,p)=>a+p.well.sh,0)/players.length).toFixed(1)+"h",s:"Media equipo",c:"warn"},
+    {l:"Fatiga media", v:(players.reduce((a,p)=>a+p.well.fa,0)/players.length).toFixed(1),s:"Escala 1-10",c:"ok"},
+    {l:"RPE medio",    v:(players.reduce((a,p)=>a+(p.well.rpe||7),0)/players.length).toFixed(1),s:"Post-sesion",c:"warn"}
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${k.c==="ok"?"green":"amber"})"><div class="km-l">${k.l}</div><div class="km-v">${k.v}</div><div class="km-s">${k.s}</div></div>`).join("");
+  const inits=players.map(p=>p.init);
+  const rdBg=players.map(p=>p.readiness>=70?"#bbf7d0":p.readiness>=50?"#fde68a":"#fca5a5");
+  mkChart("cReadiness",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.readiness),backgroundColor:rdBg,borderRadius:4},{...refLine(70,"#059669"),data:inits.map(()=>70)},{...refLine(50,"#d97706"),data:inits.map(()=>50)}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,max:110}}}});
+  const wDates=["14 abr","15 abr","16 abr","17 abr","18 abr"];
+  const wSq=[8,7,6,8,7];const wFa=[2,3,5,3,4];const wSt=[2,2,4,3,2];const wMu=[2,3,4,2,3];
+  mkChart("cWellTrend",{type:"line",data:{labels:wDates,datasets:[{data:wSq,borderColor:"#2563eb",tension:.3,pointRadius:3,borderWidth:2},{data:wFa,borderColor:"#d97706",tension:.3,pointRadius:3,borderWidth:2},{data:wSt,borderColor:"#dc2626",tension:.3,pointRadius:3,borderWidth:2},{data:wMu,borderColor:"#7c3aed",tension:.3,pointRadius:3,borderWidth:2}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,max:10}}}});
+  mkChart("cRPE",{type:"bar",data:{labels:wDates,datasets:[{data:[5.2,5.8,5.5,5.3,6.1],backgroundColor:"#fed7aa",borderColor:"#f97316",borderWidth:1.5,borderRadius:4},{data:[0,0,7.0,0,8.0],backgroundColor:"#bfdbfe",borderColor:"#2563eb",borderWidth:1.5,borderRadius:4}]},options:{...cb0,scales:{...cb0.scales,y:{...cb0.scales.y,max:10}}}});
+  mkChart("cRPEvsGPS",{type:"bar",data:{labels:inits,datasets:[{data:players.map(p=>p.load),backgroundColor:"#bfdbfe",borderColor:"#2563eb",borderWidth:1.5,borderRadius:4},{data:players.map(p=>Math.round((p.well.rpe||7)*(p.mins>0?p.mins:90))),backgroundColor:"#fed7aa",borderColor:"#f97316",borderWidth:1.5,borderRadius:4}]},options:cb0});
+  document.getElementById("wellTbl").innerHTML=players.map(p=>{
+    const w=p.well;const rc=p.readiness>=70?"var(--green)":p.readiness>=50?"var(--amber)":"var(--red)";
+    return`<tr><td style="font-weight:600">${p.name}</td>
+      <td class="mn" style="color:${w.sq>=7?"var(--green)":w.sq>=5?"var(--amber)":"var(--red)"}">${w.sq}/10</td>
+      <td class="mn">${w.sh}h</td>
+      <td class="mn" style="color:${w.mu<=3?"var(--green)":w.mu<=6?"var(--amber)":"var(--red)"}">${w.mu}/10</td>
+      <td class="mn" style="color:${w.fa<=3?"var(--green)":w.fa<=6?"var(--amber)":"var(--red)"}">${w.fa}/10</td>
+      <td class="mn" style="color:${w.st<=3?"var(--green)":w.st<=6?"var(--amber)":"var(--red)"}">${w.st}/10</td>
+      <td><span style="font-family:var(--m);font-weight:700;color:${rc}">${p.readiness}</span></td>
+      <td class="mn">${w.rpe||"-"}</td></tr>`;
+  }).join("");
+}
+
+// ====== STATS ======
+function renderStats(){
+  if(players.length===0)return;
+  const cb=CB(),cb0={...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0}}};
+  const names=statsData.map(p=>p.name.split(" ")[0]);
+  mkChart("cMins",{type:"bar",data:{labels:names,datasets:[{data:statsData.map(p=>p.mins),backgroundColor:"#bfdbfe",borderColor:"#2563eb",borderWidth:1.5,borderRadius:4}]},options:cb0});
+  mkChart("cGoals",{type:"bar",data:{labels:names,datasets:[{data:statsData.map(p=>p.goles),backgroundColor:"#a7f3d0",borderColor:"#059669",borderWidth:1.5,borderRadius:4},{data:statsData.map(p=>p.asist),backgroundColor:"#d1fae5",borderColor:"#34d399",borderWidth:1,borderRadius:4}]},options:cb0});
+  document.getElementById("statsTbl").innerHTML=statsData.map(p=>{
+    const g90=p.mins>0?(p.goles/p.mins*90).toFixed(2):0;const a90=p.mins>0?(p.asist/p.mins*90).toFixed(2):0;
+    return`<tr><td style="font-weight:600">${p.name}</td><td><span class="pos ${PC[p.pos]}">${p.pos}</span></td><td class="mn">${p.pj}</td><td class="mn">${p.mins}</td><td class="mn" style="font-weight:700;color:${p.goles>3?"var(--green)":"inherit"}">${p.goles}</td><td class="mn">${p.asist}</td><td class="mn" style="font-weight:700">${p.goles+p.asist}</td><td class="mn">${g90}</td><td class="mn">${a90}</td><td class="mn">${p.am}</td><td class="mn" style="color:${p.ro>0?"var(--red)":"inherit"}">${p.ro}</td></tr>`;
+  }).join("");
+  document.getElementById("matchTbl").innerHTML=matchData.map(m=>{const r=m.gf>m.gc?"V":m.gf===m.gc?"E":"D";return`<tr><td>${m.date}</td><td style="font-weight:600">${m.rival}</td><td>${m.comp}</td><td class="mn">${m.gf}-${m.gc}</td><td style="font-weight:700;color:${r==="V"?"var(--green)":r==="E"?"var(--amber)":"var(--red)"}">${r}</td></tr>`;}).join("");
+  document.getElementById("statsKpis").innerHTML=[
+    {l:"Partidos",v:"12",s:"Temporada 2025-26"},{l:"Goles",v:"18",s:"1.5 / partido"},
+    {l:"Asistencias",v:"14",s:"1.17 / partido"},{l:"Clean sheets",v:"5",s:"41.7% partidos"}
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--blue)"><div class="km-l">${k.l}</div><div class="km-v">${k.v}</div><div class="km-s">${k.s}</div></div>`).join("");
+}
+
+// ====== FATIGUE VIEW ======
+function renderFatigue(data){
+  if(!data||data.length===0)return;
+  const fd=[...data].map(p=>({...p}));
+  fd.forEach(p=>{p.fat=fatigue(p)||p.fat;});
+  fd.sort((a,b)=>b.fat-a.fat);
+  const inits=fd.map(p=>p.init);
+  const cb=CB();
+  const avgFat=Math.round(fd.reduce((a,p)=>a+p.fat,0)/fd.length);
+  const atRisk=fd.filter(p=>p.fat>=70).length;
+  document.getElementById("fatKpis").innerHTML=`<div class="g4">`+[
+    {l:"Fatigue medio",v:avgFat,c:avgFat>=55?"red":avgFat>=35?"amber":"green"},
+    {l:"En riesgo >=70",v:atRisk,c:atRisk>0?"red":"green"},
+    {l:"ACWR > 1.5",v:fd.filter(p=>p.acwr>1.5).length,c:fd.some(p=>p.acwr>1.5)?"red":"green"},
+    {l:"Mayor fatiga",v:fd[0].init,c:"txt",s:fd[0].fat+" - "+fd[0].fatStatus}
+  ].map(k=>`<div class="km" style="border-left:3px solid var(--${k.c})"><div class="km-l">${k.l}</div><div class="km-v" style="color:var(--${k.c});font-size:${typeof k.v==="string"?"15px":"22px"}">${k.v}</div>${k.s?`<div class="km-s">${k.s}</div>`:""}</div>`).join("")+"</div>";
+  const alerts=fd.filter(p=>p.acwr>1.5||p.fat>=70);
+  document.getElementById("fatAlert").innerHTML=alerts.length>0
+    ?`<div class="abar abar-r">&#128680; ${alerts.length} en riesgo: ${alerts.map(p=>p.name+" (Fat:"+p.fat+" ACWR:"+p.acwr+")").join(" - ")}</div>`
+    :`<div class="abar abar-g">&#9989; Ninguno en zona de riesgo alto</div>`;
+  mkChart("cFatigue",{type:"bar",data:{labels:inits,datasets:[{data:fd.map(p=>p.fat),backgroundColor:fd.map(p=>p.fatBg),borderRadius:4},{...refLine(70,"#dc2626"),data:fd.map(()=>70)},{...refLine(55,"#d97706"),data:fd.map(()=>55)}]},options:{...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0,max:105}}}});
+  mkChart("cFatComp",{type:"bar",data:{labels:inits,datasets:[{data:fd.map(p=>+(p.loadScore*.40).toFixed(1)),backgroundColor:"#bfdbfe"},{data:fd.map(p=>+(p.fat*.25).toFixed(1)),backgroundColor:"#ddd6fe"},{data:fd.map(p=>+(p.acwrRisk*.20).toFixed(1)),backgroundColor:"#fde68a"},{data:fd.map(p=>+(p.readiness*.15).toFixed(1)),backgroundColor:"#a7f3d0"}]},options:{...cb,scales:{x:{stacked:true,ticks:{color:"#6b7a92",font:{size:10},maxRotation:0},grid:{color:"rgba(0,0,0,.04)"},border:{display:false}},y:{stacked:true,min:0,max:105,ticks:{color:"#6b7a92",font:{size:10}},grid:{color:"rgba(0,0,0,.04)"},border:{display:false}}}}});
+  mkChart("cScatter",{type:"scatter",data:{datasets:[{data:fd.map(p=>({x:p.acwr,y:p.fat})),backgroundColor:fd.map(p=>p.fatBg),pointRadius:9,pointHoverRadius:11}]},options:{...cb,plugins:{...cb.plugins,tooltip:{...cb.plugins.tooltip,callbacks:{label:ctx=>{const p=fd[ctx.dataIndex];return p.name+": ACWR "+p.acwr+" Fat "+p.fat;}}}},scales:{x:{min:.3,max:2.3,title:{display:true,text:"ACWR",color:"#6b7a92",font:{size:10}},ticks:{color:"#6b7a92",font:{size:10}},grid:{color:"rgba(0,0,0,.04)"},border:{display:false}},y:{min:0,max:105,title:{display:true,text:"Fatigue",color:"#6b7a92",font:{size:10}},ticks:{color:"#6b7a92",font:{size:10}},grid:{color:"rgba(0,0,0,.04)"},border:{display:false}}}}});
+  mkChart("cMechLoad",{type:"bar",data:{labels:inits,datasets:[{data:fd.map(p=>p.fat*.25),backgroundColor:"#ddd6fe",borderColor:"#7c3aed",borderWidth:1.5,borderRadius:4},{data:fd.map(p=>p.loadScore||p.fat*.40),backgroundColor:"#bfdbfe",borderColor:"#2563eb",borderWidth:1.5,borderRadius:4}]},options:{...cb,scales:{...cb.scales,y:{...cb.scales.y,min:0}}}});
+  document.getElementById("fatTbl").innerHTML=fd.map(p=>`<tr>
+    <td style="font-weight:600">${p.name}</td><td><span class="pos ${PC[p.pos]}">${PL[p.pos]}</span></td>
+    <td class="mn">${p.loadScore||Math.round(p.fat*.40)}</td>
+    <td class="mn">${Math.round(p.fat*.25)}</td>
+    <td class="mn" style="color:${p.acwr>1.5?"var(--red)":p.acwr>1.3?"var(--amber)":"var(--green)"};font-weight:700">${p.acwr}</td>
+    <td class="mn">${p.readiness}</td>
+    <td class="mn" style="font-weight:700;color:${p.fatCol}">${p.fat}</td>
+    <td style="font-size:11px">${p.fatStatus}</td>
+    <td style="font-size:10px;color:var(--red);font-weight:600">${p.acwr>1.5||p.fat>=70?"Revisar carga":""}</td>
+  </tr>`).join("");
+}
+
+// ====== PDF HANDLER ======
+function triggerPDF(){document.getElementById("pdfInput").click();}
+function handlePDF(input){
+  const file=input.files[0];if(!file)return;
+  const btnTxt=document.getElementById("pdfNavTxt");
+  const btn2Txt=document.getElementById("pdfBtnTxt");
+  if(btnTxt)btnTxt.textContent="Leyendo...";
+  if(btn2Txt)btn2Txt.textContent="Leyendo...";
+  function withPdfJs(cb){
+    if(window.pdfjsLib){cb();return;}
+    const s=document.createElement("script");
+    s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";cb();};
+    s.onerror=()=>readFallback(file);
+    document.head.appendChild(s);
+  }
+  withPdfJs(()=>{
+    const reader=new FileReader();
+    reader.onload=async(e)=>{
+      try{
+        const arr=new Uint8Array(e.target.result);
+        const pdf=await pdfjsLib.getDocument({data:arr}).promise;
+        let text="";
+        for(let i=1;i<=pdf.numPages;i++){
+          const pg=await pdf.getPage(i);
+          const tc=await pg.getTextContent();
+          text+=tc.items.map(t=>t.str).join(" ")+"\n";
+        }
+        parsePDFText(text,file.name);
+      }catch(err){readFallback(file);}
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+function readFallback(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const bytes=new Uint8Array(e.target.result);
+    const text=Array.from(bytes).map(b=>b<128?String.fromCharCode(b):" ").join("");
+    parsePDFText(text,file.name);
+  };
+  reader.readAsArrayBuffer(file);
+}
+function parsePDFText(text,fname){
+  const lines=text.split(/[\n\r]+/).map(l=>l.trim()).filter(l=>l.length>3);
+  const headerM=text.match(/Match\s+Vs\.?\s+([A-Za-z\s]+?)(?:\s+\d|\s*\n)/i);
+  const sessionLabel=headerM?headerM[0].trim().slice(0,50):fname;
+  let extracted=0;
+  const preview=[];
+  players.forEach(p=>{
+    const lastName=p.name.split(" ")[1]||p.name.split(" ")[0];
+    for(const line of lines){
+      if(line.toLowerCase().includes(lastName.toLowerCase())){
+        const nums=(line.match(/\d+\.?\d*/g)||[]).map(Number);
+        if(nums.length>=8){
+          // PlayerData columns: dist(mi) load wl sprintDist(yds) hirDist(yds) hiEvt ypm sprEvt topSpd(mph) acc dec
+          p.dist=nums[0]||p.dist;
+          p.load=nums[1]||p.load;
+          p.wl=nums[2]||p.wl;
+          p.spd=nums[3]||p.spd;
+          p.hir=nums[4]||p.hir;
+          p.hiEvt=nums[5]||p.hiEvt;
+          p.ypm=nums[6]||p.ypm;
+          p.sprEvt=nums[7]||p.sprEvt;
+          if(nums[8])p.topSpd=nums[8];
+          if(nums[9])p.acc=nums[9];
+          if(nums[10])p.dec=nums[10];
+          // Recompute derived
+          p.distKm=mi2km(p.dist);p.hirM=yd2m(p.hir);p.spdM=yd2m(p.spd);
+          p.topSpdKmh=mph2kmh(p.topSpd);p.ypmM=ypm2mpm(p.ypm);
+          p.hirRatio=p.dist>0?+(p.hir/(p.dist*1760)*100).toFixed(1):0;
+          p.adPerKm=+((p.acc+p.dec)/p.distKm).toFixed(1);
+          extracted++;
+          preview.push({init:p.init,dist:p.distKm,load:p.load,hir:p.hirM,spd:p.spdM,top:p.topSpdKmh,acc:p.acc,dec:p.dec});
+          break;
+        }
+      }
+    }
+  });
+  // Recompute fatigue for all
+  players.forEach(p=>{p.fat=fatigue(p);p.fatStatus=p.fat<30?"Fresh":p.fat<55?"Normal":p.fat<70?"Fatigado":p.fat<85?"High Risk":"Injury Risk";p.fatCol=p.fat<30?"#059669":p.fat<55?"#d97706":p.fat<70?"#f97316":p.fat<85?"#dc2626":"#991b1b";p.fatBg=p.fat<30?"#bbf7d0":p.fat<55?"#fde68a":p.fat<70?"#fed7aa":"#fca5a5";});
+  const btnTxt=document.getElementById("pdfNavTxt");
+  const btn2Txt=document.getElementById("pdfBtnTxt");
+  const src=document.getElementById("pdfSrc");
+  if(extracted>0){
+    if(btnTxt)btnTxt.textContent="PDF cargado";
+    if(btn2Txt)btn2Txt.textContent="PDF cargado";
+    if(src)src.textContent=fname+" - "+extracted+" jugadores";
+    const pdfS=document.getElementById("pdfStatus");
+    if(pdfS){pdfS.style.display="block";pdfS.innerHTML=`<div class="abar abar-g">&#9989; PDF cargado: ${extracted} jugadores de "${sessionLabel}"</div>`;}
+    document.getElementById("pdfResult").innerHTML=`<div class="abar abar-g" style="margin-bottom:10px">&#9989; ${extracted} jugadores extraidos</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:9px">Sesion: <strong>${sessionLabel}</strong></div>
+    <div class="tbl-w"><table class="tbl"><thead><tr><th>Jug</th><th>Dist km</th><th>Load</th><th>HIR m</th><th>Sprint m</th><th>Top km/h</th><th>Acc</th><th>Dec</th></tr></thead>
+    <tbody>${preview.map(d=>`<tr><td style="font-weight:700">${d.init}</td><td class="mn">${d.dist}</td><td class="mn">${d.load}</td><td class="mn">${d.hir}</td><td class="mn">${d.spd}</td><td class="mn">${d.top}</td><td class="mn">${d.acc}</td><td class="mn">${d.dec}</td></tr>`).join("")}</tbody></table></div>`;
+    openM("mPDF");
+    renderTeam();renderFatigue(players);
+  }else{
+    if(btnTxt)btnTxt.textContent="Subir PDF GPS";
+    if(btn2Txt)btn2Txt.textContent="Subir PDF PlayerData";
+    document.getElementById("pdfResult").innerHTML=`<div class="abar abar-a">&#9888;&#65039; No se encontraron datos. Prueba con Entrada manual.</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Posibles causas: PDF escaneado, formato incorrecto, o pagina incorrecta (usa pagina 2 del informe PlayerData).</div>`;
+    openM("mPDF");
+  }
+}
+
+// Wellness/Forms functions defined above in renderPlayerView block
+
+// ====== MANUAL ENTRY ======
+function fillMan(idx){
+  const p=players[parseInt(idx)];if(!p)return;
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+  s("m_dist",p.distKm);s("m_load",p.load);s("m_hir",p.hirM);s("m_spd",p.spdM);
+  s("m_topSpd",p.topSpdKmh);s("m_ypm",p.ypmM);s("m_acc",p.acc);s("m_dec",p.dec);
+  s("m_hiEvt",p.hiEvt);s("m_sprEvt",p.sprEvt);s("m_wl",p.wl);s("m_mins",p.mins);
+}
+function clearMan(){["m_dist","m_load","m_hir","m_spd","m_topSpd","m_ypm","m_acc","m_dec","m_hiEvt","m_sprEvt","m_wl","m_mins"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});}
+function saveMan(){
+  const idx=parseInt(document.getElementById("manP").value);
+  const p=players[idx];if(!p)return;
+  const g=id=>{const el=document.getElementById(id);const v=parseFloat(el?el.value:"");return isNaN(v)?null:v;};
+  const km=g("m_dist"),hirM=g("m_hir"),spdM=g("m_spd"),kmh=g("m_topSpd"),mpm=g("m_ypm");
+  if(km!==null){p.dist=km/MI2KM;p.distKm=km;}
+  if(g("m_load")!==null)p.load=g("m_load");
+  if(hirM!==null){p.hir=hirM/YD2M;p.hirM=hirM;}
+  if(spdM!==null){p.spd=spdM/YD2M;p.spdM=spdM;}
+  if(kmh!==null){p.topSpd=kmh/MPH2KMH;p.topSpdKmh=kmh;}
+  if(mpm!==null){p.ypm=mpm/YPM2MPM;p.ypmM=mpm;}
+  if(g("m_acc")!==null)p.acc=g("m_acc");
+  if(g("m_dec")!==null)p.dec=g("m_dec");
+  if(g("m_hiEvt")!==null)p.hiEvt=g("m_hiEvt");
+  if(g("m_sprEvt")!==null)p.sprEvt=g("m_sprEvt");
+  if(g("m_wl")!==null)p.wl=g("m_wl");
+  if(g("m_mins")!==null)p.mins=g("m_mins");
+  p.hirRatio=p.dist>0?+(p.hir/(p.dist*1760)*100).toFixed(1):0;
+  p.adPerKm=+((p.acc+p.dec)/p.distKm).toFixed(1);
+  p.fat=fatigue(p);
+  p.fatStatus=p.fat<30?"Fresh":p.fat<55?"Normal":p.fat<70?"Fatigado":p.fat<85?"High Risk":"Injury Risk";
+  p.fatCol=p.fat<30?"#059669":p.fat<55?"#d97706":p.fat<70?"#f97316":p.fat<85?"#dc2626":"#991b1b";
+  p.fatBg=p.fat<30?"#bbf7d0":p.fat<55?"#fde68a":p.fat<70?"#fed7aa":"#fca5a5";
+  closeM("mManual");
+  renderTeam();renderFatigue(players);
+  if(document.getElementById("s-player").classList.contains("active")){renderPlayerView();renderPlayerChart();}
+}
+
+// ====== MODALS ======
+function closeM(id){const el=document.getElementById(id);if(el)el.classList.remove("open");}
+document.querySelectorAll(".ovl").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open");}));
+
+init();
+</script>
+</body>
+</html>
